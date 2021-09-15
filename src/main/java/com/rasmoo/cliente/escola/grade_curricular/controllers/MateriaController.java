@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class MateriaController {
     }
 
     @GetMapping
-    public Page<Materia> listMaterias (
+    public Page<MateriaDTO> listMaterias (
             @PageableDefault(sort = "nome",
                     direction = Sort.Direction.ASC,
                     page = 0,
