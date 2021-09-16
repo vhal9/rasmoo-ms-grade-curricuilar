@@ -2,6 +2,7 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,20 @@ public class MateriaService {
 
     }
 
+    public MessageResponseDTO createMateria(MateriaDTO materiaDTO) {
+
+        Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+        Materia savedMateria = materiaRepository.save(materiaToSave);
+
+        return createdMessageResponse(savedMateria.getId(), "Created Materia with ID ");
+    }
+
+    private MessageResponseDTO createdMessageResponse(Long id, String message) {
+
+        return MessageResponseDTO
+                .builder()
+                .message(message + id)
+                .build();
+
+    }
 }
