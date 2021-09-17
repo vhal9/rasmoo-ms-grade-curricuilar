@@ -61,4 +61,11 @@ public class MateriaController {
 
     }
 
+    @DeleteMapping("{id}")
+    public MessageResponseDTO delete(@PathVariable Long id) throws MateriaNotFoundException {
+
+        return materiaService.deleteMateriaById(id);
+
+    }
+
 }

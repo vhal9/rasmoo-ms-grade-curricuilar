@@ -57,6 +57,16 @@ public class MateriaService {
 
     }
 
+    public MessageResponseDTO deleteMateriaById(Long id) throws MateriaNotFoundException {
+
+        verifyIfMateriaExists(id);
+
+        materiaRepository.deleteById(id);
+
+        return createdMessageResponse(id, "Delete Materia with ID ");
+
+    }
+
     private MessageResponseDTO createdMessageResponse(Long id, String message) {
 
         return MessageResponseDTO
