@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
@@ -36,6 +37,18 @@ public class MateriaService {
         return createdMessageResponse(savedMateria.getId(), "Created Materia with ID ");
     }
 
+    public MessageResponseDTO updateMateria(Long id, MateriaDTO materiaDTO) throws MateriaNotFoundException {
+
+        verifyIfMateriaExists(id);
+
+        materiaDTO.setId(id);
+        Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+        Materia savedMateria = materiaRepository.save(materiaToSave);
+
+        return createdMessageResponse(savedMateria.getId(), "Update Materia with ID ");
+
+    }
+
     private MessageResponseDTO createdMessageResponse(Long id, String message) {
 
         return MessageResponseDTO
@@ -44,4 +57,12 @@ public class MateriaService {
                 .build();
 
     }
+
+    private void verifyIfMateriaExists(Long id) throws MateriaNotFoundException {
+
+        materiaRepository.findById(id)
+                .orElseThrow(() -> new MateriaNotFoundException(id));
+
+    }
+
 }
