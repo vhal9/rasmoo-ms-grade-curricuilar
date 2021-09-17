@@ -39,6 +39,13 @@ public class MateriaController {
 
     }
 
+    @GetMapping("{id}")
+    public MateriaDTO getMateriaById(@PathVariable Long id) throws MateriaNotFoundException {
+
+        return materiaService.getMateriaById(id);
+
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponseDTO createMateria(@Valid @RequestBody MateriaDTO materiaDTO) {

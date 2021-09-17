@@ -29,6 +29,14 @@ public class MateriaService {
 
     }
 
+    public MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException {
+
+        Materia materia = findMateriaById(id);
+
+        return materiaMapper.toDTO(materia);
+
+    }
+
     public MessageResponseDTO createMateria(MateriaDTO materiaDTO) {
 
         Materia materiaToSave = materiaMapper.toModel(materiaDTO);
@@ -60,8 +68,14 @@ public class MateriaService {
 
     private void verifyIfMateriaExists(Long id) throws MateriaNotFoundException {
 
-        materiaRepository.findById(id)
-                .orElseThrow(() -> new MateriaNotFoundException(id));
+        findMateriaById(id);
+
+    }
+
+    private Materia findMateriaById(Long id) throws MateriaNotFoundException {
+
+        return materiaRepository.findById(id)
+                .orElseThrow(()-> new MateriaNotFoundException(id));
 
     }
 
