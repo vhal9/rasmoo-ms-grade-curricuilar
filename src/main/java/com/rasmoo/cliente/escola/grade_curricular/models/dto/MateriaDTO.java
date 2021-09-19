@@ -22,9 +22,9 @@ public class MateriaDTO {
     @Size(min = 3, max = 30, message = "Nome field must be between 3 and 30")
     private String nome;
 
-    @NotNull
+    @NotNull(message = "Horas field is required")
     @Min(value = 0, message = "Horas field must be greater than 0")
-    private int horas;
+    private Integer horas;
 
     @NotEmpty(message = "Codigo field is required")
     @Size(min = 3, max = 10, message = "Codigo field must be between 3 and 10")
