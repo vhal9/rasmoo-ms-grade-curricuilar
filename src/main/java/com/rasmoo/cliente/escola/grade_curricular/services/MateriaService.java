@@ -8,11 +8,13 @@ import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
+@CacheConfig(cacheNames = "materia")
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MateriaService {
@@ -21,6 +23,7 @@ public class MateriaService {
 
     private final MateriaMapper materiaMapper = MateriaMapper.INSTANCE;
 
+    @CachePut(unless = "#result.getTotalElements() < 3")
     public Page<MateriaDTO> listMaterias(Pageable pageable) {
 
         Page<Materia> allMaterias = materiaRepository.findAll(pageable);
@@ -28,7 +31,8 @@ public class MateriaService {
         return allMaterias.map(materia -> materiaMapper.toDTO(materia));
 
     }
-
+    
+    @CachePut(key = "#id")
     public MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException {
 
         Materia materia = findMateriaById(id);
