@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
+import com.rasmoo.cliente.escola.grade_curricular.controllers.MateriaController;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
@@ -12,6 +13,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
 @CacheConfig(cacheNames = "materia")
@@ -28,7 +30,19 @@ public class MateriaService {
 
         Page<Materia> allMaterias = materiaRepository.findAll(pageable);
 
-        return allMaterias.map(materia -> materiaMapper.toDTO(materia));
+        return allMaterias.map(materia -> {
+            try {
+                return materiaMapper.toDTO(materia).add(
+                        WebMvcLinkBuilder.linkTo(
+                                WebMvcLinkBuilder
+                                        .methodOn(MateriaController.class)
+                                        .getMateriaById(materia.getId())).withSelfRel()
+                );
+            } catch (MateriaNotFoundException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
 
     }
     
@@ -75,6 +89,7 @@ public class MateriaService {
 
         return MessageResponseDTO
                 .builder()
+                .id(id)
                 .message(message + id)
                 .build();
 

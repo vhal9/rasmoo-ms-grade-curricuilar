@@ -1,9 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.models.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -11,10 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MateriaDTO {
+public class MateriaDTO extends RepresentationModel<MateriaDTO> {
 
     private Long id;
 
