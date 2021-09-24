@@ -3,6 +3,7 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,18 @@ public class MateriaController {
     }
 
     @GetMapping
-    public Page<MateriaDTO> listMaterias (
+    public ResponseDTO<Page<MateriaDTO>> listMaterias (
             @PageableDefault(sort = "nome",
                     direction = Sort.Direction.ASC,
                     page = 0,
                     size = 5)
                     Pageable pageable) {
 
-        return materiaService.listMaterias(pageable);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(materiaService.listMaterias(pageable));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
 
     }
 
