@@ -57,9 +57,13 @@ public class MateriaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponseDTO createMateria(@Valid @RequestBody MateriaDTO materiaDTO) {
+    public ResponseDTO<MessageResponseDTO> createMateria(@Valid @RequestBody MateriaDTO materiaDTO) {
 
-        return  materiaService.createMateria(materiaDTO);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(materiaService.createMateria(materiaDTO));
+        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
+
+        return responseDTO;
 
     }
 

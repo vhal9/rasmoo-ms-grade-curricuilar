@@ -71,6 +71,7 @@ public class MateriaService {
 
         return MessageResponseDTO
                 .builder()
+                .id(id)
                 .message(message + id)
                 .build();
 
