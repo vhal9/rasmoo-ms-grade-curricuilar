@@ -2,6 +2,7 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.ApiErros;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,9 +17,13 @@ public class ApplicationControllerAdvice {
 
     @ExceptionHandler(MateriaNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErros handleMateriaNotFoundException(MateriaNotFoundException ex) {
+    public ResponseDTO<String> handleMateriaNotFoundException(MateriaNotFoundException ex) {
 
-        return new ApiErros(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(ex.getMessage());
+        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+
+        return responseDTO;
 
     }
 
