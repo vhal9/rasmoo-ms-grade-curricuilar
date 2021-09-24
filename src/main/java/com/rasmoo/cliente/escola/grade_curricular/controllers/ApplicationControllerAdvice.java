@@ -29,14 +29,18 @@ public class ApplicationControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErros handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseDTO<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
         List<String> erros = ex.getBindingResult().getAllErrors()
                 .stream()
                 .map( erro -> erro.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        return new ApiErros(erros, HttpStatus.BAD_REQUEST.value());
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(erros);
+        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+
+        return responseDTO;
 
     }
 }
