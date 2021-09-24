@@ -68,9 +68,13 @@ public class MateriaController {
     }
 
     @PutMapping("{id}")
-    public MessageResponseDTO update(@Valid @PathVariable Long id, @RequestBody MateriaDTO materiaDTO) throws MateriaNotFoundException {
+    public ResponseDTO<MessageResponseDTO> update(@Valid @PathVariable Long id, @RequestBody MateriaDTO materiaDTO) throws MateriaNotFoundException {
 
-        return materiaService.updateMateria(id, materiaDTO);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(materiaService.updateMateria(id, materiaDTO));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
 
     }
 
