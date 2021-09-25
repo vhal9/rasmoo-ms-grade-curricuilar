@@ -1,7 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.models.ApiErros;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
