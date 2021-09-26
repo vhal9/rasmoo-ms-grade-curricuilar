@@ -5,8 +5,13 @@ import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
 import com.rasmoo.cliente.escola.grade_curricular.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +26,22 @@ public class CursoController {
     @Autowired
     CursoController(CursoService cursoService) {
         this.cursoService = cursoService;
+    }
+
+    @GetMapping
+    public ResponseDTO<Page<Curso>> listAllCursos(
+            @PageableDefault(sort = "nome",
+                    direction = Sort.Direction.ASC,
+                    page = 0,
+                    size = 5)
+                    Pageable pageable){
+
+        ResponseDTO responseDTO = new ResponseDTO<>();
+        responseDTO.setData(cursoService.listAll(pageable));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
+
     }
 
     @PostMapping

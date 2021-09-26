@@ -9,6 +9,8 @@ import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.CursoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,12 @@ public class CursoService {
     private MateriaService materiaService;
 
     private final CursoMapper cursoMapper = CursoMapper.INSTANCE;
+
+    public Page<Curso> listAll(Pageable pageable) {
+
+        return cursoRepository.findAll(pageable);
+
+    }
 
     public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws MateriaNotFoundException, SendIdException {
 
