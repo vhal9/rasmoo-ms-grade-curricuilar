@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -64,6 +67,20 @@ public class MateriaService {
         materiaRepository.deleteById(id);
 
         return createdMessageResponse(id, "Delete Materia with ID ");
+
+    }
+
+    public List<Materia> findMateriasByIds(List<Long> ids) throws MateriaNotFoundException {
+
+        List<Materia> materias = new ArrayList();
+
+        for (Long id : ids) {
+
+            materias.add(this.findMateriaById(id));
+
+        }
+
+        return materias;
 
     }
 
