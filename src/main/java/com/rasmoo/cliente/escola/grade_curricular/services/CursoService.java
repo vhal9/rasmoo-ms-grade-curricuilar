@@ -50,7 +50,30 @@ public class CursoService {
 
         Curso savedCurso = cursoRepository.save(cursoToSave);
 
-        return createdMessageResponse(savedCurso.getId(), "Created curso with ID ");
+        return createdMessageResponse(savedCurso.getId(), "Criado curso com ID ");
+
+    }
+
+    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws MateriaNotFoundException, SendIdException, CursoNotFoundException {
+
+        findCursoById(id);
+
+        Curso cursoToSave = cursoMapper.toModel(cursoDTO);
+
+        cursoToSave.setMaterias(materiaService.findMateriasByIds(cursoDTO.getIdsMaterias()));
+        cursoToSave.setId(id);
+        Curso savedCurso = cursoRepository.save(cursoToSave);
+
+        return createdMessageResponse(savedCurso.getId(), "Alterado curso com ID ");
+
+    }
+
+    public MessageResponseDTO deleteCurso(Long id) throws CursoNotFoundException {
+
+        Curso curso = findCursoById(id);
+        cursoRepository.delete(curso);
+
+        return createdMessageResponse(id, "Deletado curso com ID ");
 
     }
 

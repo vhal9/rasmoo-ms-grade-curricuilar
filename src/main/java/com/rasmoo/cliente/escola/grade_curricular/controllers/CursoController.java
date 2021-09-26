@@ -68,5 +68,26 @@ public class CursoController {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseDTO<MessageResponseDTO> updateCurso(@PathVariable Long id, @RequestBody CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException, CursoNotFoundException {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(cursoService.updateCurso(id, cursoDTO));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseDTO<MessageResponseDTO> deleteCurso(@PathVariable Long id) throws CursoNotFoundException {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(cursoService.deleteCurso(id));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
+
+    }
 
 }
