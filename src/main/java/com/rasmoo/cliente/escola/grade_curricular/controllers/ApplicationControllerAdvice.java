@@ -1,6 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,6 +38,18 @@ public class ApplicationControllerAdvice {
 
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(erros);
+        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+
+        return responseDTO;
+
+    }
+
+    @ExceptionHandler(SendIdException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleSendIdException(SendIdException ex) {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(ex.getMessage());
         responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
 
         return responseDTO;
