@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
@@ -38,6 +39,17 @@ public class CursoController {
 
         ResponseDTO responseDTO = new ResponseDTO<>();
         responseDTO.setData(cursoService.listAll(pageable));
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
+
+    }
+
+    @GetMapping ("/{id}")
+    public ResponseDTO<Curso> findCursoById(@PathVariable Long id) throws CursoNotFoundException {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(cursoService.findCursoById(id));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;

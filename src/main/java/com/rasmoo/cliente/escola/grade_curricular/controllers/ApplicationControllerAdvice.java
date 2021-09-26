@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
@@ -55,4 +56,18 @@ public class ApplicationControllerAdvice {
         return responseDTO;
 
     }
+
+    @ExceptionHandler(CursoNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleCursoNotFoundException(CursoNotFoundException ex) {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(ex.getMessage());
+        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+
+        return responseDTO;
+
+    }
+
+
 }
