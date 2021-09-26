@@ -1,0 +1,39 @@
+package com.rasmoo.cliente.escola.grade_curricular.controllers;
+
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.services.CursoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/api/cursos")
+public class CursoController {
+
+    private CursoService cursoService;
+
+    @Autowired
+    CursoController(CursoService cursoService) {
+        this.cursoService = cursoService;
+    }
+
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseDTO<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws MateriaNotFoundException, SendIdException {
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(cursoService.createCurso(cursoDTO));
+        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
+
+        return responseDTO;
+
+    }
+
+
+}
