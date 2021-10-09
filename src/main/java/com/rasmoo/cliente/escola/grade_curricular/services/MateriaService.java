@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,11 +25,11 @@ public class MateriaService {
 
     private final MateriaMapper materiaMapper = MateriaMapper.INSTANCE;
 
-    public Page<MateriaDTO> listMaterias(Pageable pageable) {
+    public List<MateriaDTO> listMaterias() {
 
-        Page<Materia> allMaterias = materiaRepository.findAll(pageable);
+        List<Materia> allMaterias = materiaRepository.findAll();
 
-        return allMaterias.map(materia -> materiaMapper.toDTO(materia));
+        return allMaterias.stream().map(materia -> materiaMapper.toDTO(materia)).collect(Collectors.toList());
 
     }
 

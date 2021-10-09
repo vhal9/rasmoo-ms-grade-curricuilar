@@ -29,15 +29,10 @@ public class MateriaController {
     }
 
     @GetMapping
-    public ResponseDTO<Page<MateriaDTO>> listMaterias (
-            @PageableDefault(sort = "nome",
-                    direction = Sort.Direction.ASC,
-                    page = 0,
-                    size = 5)
-                    Pageable pageable) {
+    public ResponseDTO<MateriaDTO> listMaterias () {
 
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(materiaService.listMaterias(pageable));
+        responseDTO.setData(materiaService.listMaterias());
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
