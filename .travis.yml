@@ -4,6 +4,6 @@ deploy:
   provider: heroku
   api_key:
     secure: HIn8JwPqOwGcrEnCfJf7uaJ4LrWMTaGgjRgddBUXWaA8p+rxzuOIa2KZ0B7Xtes07I5tUX0H62RbO3Jq9LV+NEcg41nNyfgUtDgN6DfhicD38C9uUCkXnlru+SnB/Pe++vKnN9ULjF/rFZSudAzilJO837B9xTAJn52v7XsUluH4kLiumiOydNofHXQ/f8JjEtPVEnjV0efTep0uBQvnQC94p4OpTmDvr6KyfjEIZ3LXmVTK9j7+KqhYcX+57u0jyw7bIqTleM8+iu5F3MPjRep6ibFoV3QGqTseduKlj/0QBjv5fpSAJLyiNJdnnhFb57PHL5Wj31/eeC88kcHUP1xfbzY4jlt7l7J3atTY0FPybtXnh6m9VWLtld9hpiO8+Rt6ivjyX0ZIOn0LtuRzJ/e2EyevQkgI6pMu9JaVtsZmlovH0u+lS1WT9VIZuH2ZtFWJdeWdUbNCqPbTt6t2/I+tjLBjua9dodRqvqvp2qHSdygnnMPmpFiTEx3bGrJFySoSywKGOkLvwZBY70iRFHe0ILdD8vrKT8VgWsjlIGKcwmN4y89CahWVI48/nEQqdSBAlFlRm5B0dnk0rapdqIQ7tmCg9nMXlaJkcVGlGcR4HiYikB6GqZJdS4f43bk6Bw9yinx2wSz/N0L+fAjKA+qdYTFZ6+2knNnteGxXoo8=
-  app: grade_curricular-dev-1
+  app: grade-curricular-dev-1
   on:
     all_branch: true
