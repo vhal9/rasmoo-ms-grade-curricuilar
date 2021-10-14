@@ -1,8 +1,10 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +20,12 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.Collections;
 
+import static com.rasmoo.cliente.escola.grade_curricular.utils.JsonConvertionUtils.asJsonString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -116,6 +120,57 @@ public class MateriaControllerUnitTest {
         mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void quandoPOSTEhChamadoERetornaSucesso() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        materiaDTO.setId(null);
+        MessageResponseDTO expectedMessageResponse = MateriaMensagemResponseDTO.builder().build().toResponsePost();
+
+        //when
+        when(materiaService.createMateria(materiaDTO)).thenReturn(expectedMessageResponse);
+
+        //then
+        mockMvc.perform(post(MOVIE_API_URL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(materiaDTO)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.httpStatus", is(201)))
+                .andExpect(jsonPath("$.data.id", is(expectedMessageResponse.getId().intValue())))
+                .andExpect(jsonPath("$.data.message", is(expectedMessageResponse.getMessage())));
+    }
+
+    @Test
+    public void quandoPOSTEhChamadoComDadosInvalidosEntaoRetornaExcecao() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        materiaDTO.setId(null);
+        materiaDTO.setNome("");
+        materiaDTO.setCodigo("");
+        materiaDTO.setHoras(0);
+
+        //then
+        mockMvc.perform(post(MOVIE_API_URL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void quandoPOSTEhChamadoEnviandoIdEntaoRetornaExcecao() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //then
+        mockMvc.perform(post(MOVIE_API_URL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
+                .andExpect(status().isBadRequest());
     }
 
 }
