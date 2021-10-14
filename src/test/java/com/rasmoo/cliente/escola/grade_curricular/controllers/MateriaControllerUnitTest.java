@@ -1,6 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MateriaControllerUnitTest {
 
     private static final String MOVIE_API_URL_PATH = "/api/materias";
+    private static final Long VALID_MATERIA_ID = 1L;
 
     private MockMvc mockMvc;
 
@@ -46,7 +48,7 @@ public class MateriaControllerUnitTest {
     }
 
     @Test
-    public void QuandoGETListarTodosEhChamado() throws Exception {
+    public void quandoGETListarTodosEhChamado() throws Exception {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -67,7 +69,7 @@ public class MateriaControllerUnitTest {
     }
 
     @Test
-    public void QuandoGETListarTodosSemMateriasEhChamadoEListaVazioEhRetornado() throws Exception {
+    public void quandoGETListarTodosSemMateriasEhChamadoEListaVazioEhRetornado() throws Exception {
 
         //when
         when(materiaService.listMaterias()).thenReturn(Collections.emptyList());
@@ -79,6 +81,41 @@ public class MateriaControllerUnitTest {
                 .andExpect(jsonPath("$.httpStatus", is(200)))
                 .andExpect(jsonPath("$.data", is(empty())));
 
+    }
+
+    @Test
+    public void quandoGETbuscarMateriaPeloIdEhChamado() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaService.getMateriaById(materiaDTO.getId())).thenReturn(materiaDTO);
+
+        //then
+        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus", is(200)))
+                .andExpect(jsonPath("$.data.id", is(materiaDTO.getId().intValue())))
+                .andExpect(jsonPath("$.data.nome", is(materiaDTO.getNome())))
+                .andExpect(jsonPath("$.data.horas", is(materiaDTO.getHoras())))
+                .andExpect(jsonPath("$.data.codigo", is(materiaDTO.getCodigo())));
+    }
+
+    @Test
+    public void quandoGETbuscarMateriaPeloIdEhChamadoERetornaUmaExcecao() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaService.getMateriaById(materiaDTO.getId())).thenThrow(MateriaNotFoundException.class);
+
+        //then
+        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest());
     }
 
 }
