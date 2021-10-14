@@ -84,7 +84,7 @@ public class MateriaControllerUnitTest {
     }
 
     @Test
-    public void quandoGETbuscarMateriaPeloIdEhChamado() throws Exception {
+    public void quandoGETbuscarMateriaPeloIdEhChamadoERetornaSucesso() throws Exception {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
