@@ -33,6 +33,7 @@ public class MateriaControllerUnitTest {
 
     private static final String MOVIE_API_URL_PATH = "/api/materias";
     private static final Long VALID_MATERIA_ID = 1L;
+    private static final Long INVALID_MATERIA_ID = 2L;
 
     private MockMvc mockMvc;
 
@@ -93,10 +94,10 @@ public class MateriaControllerUnitTest {
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
 
         //when
-        when(materiaService.getMateriaById(materiaDTO.getId())).thenReturn(materiaDTO);
+        when(materiaService.getMateriaById(VALID_MATERIA_ID)).thenReturn(materiaDTO);
 
         //then
-        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + VALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.httpStatus", is(200)))
@@ -113,10 +114,10 @@ public class MateriaControllerUnitTest {
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
 
         //when
-        when(materiaService.getMateriaById(materiaDTO.getId())).thenThrow(MateriaNotFoundException.class);
+        when(materiaService.getMateriaById(INVALID_MATERIA_ID)).thenThrow(MateriaNotFoundException.class);
 
         //then
-        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(get(MOVIE_API_URL_PATH + "/" + INVALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
     }
@@ -180,10 +181,10 @@ public class MateriaControllerUnitTest {
         MessageResponseDTO expectedMessageResponse = MateriaMensagemResponseDTO.builder().build().toResponsePut();
 
         //when
-        when(materiaService.updateMateria(materiaDTO.getId(), materiaDTO)).thenReturn(expectedMessageResponse);
+        when(materiaService.updateMateria(VALID_MATERIA_ID, materiaDTO)).thenReturn(expectedMessageResponse);
 
         //then
-        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + VALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(materiaDTO)))
                 .andExpect(status().isOk())
@@ -199,10 +200,10 @@ public class MateriaControllerUnitTest {
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
 
         //when
-        when(materiaService.updateMateria(materiaDTO.getId(), materiaDTO)).thenThrow(MateriaNotFoundException.class);
+        when(materiaService.updateMateria(INVALID_MATERIA_ID, materiaDTO)).thenThrow(MateriaNotFoundException.class);
 
         //then
-        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + INVALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(materiaDTO)))
                 .andExpect(status().isBadRequest());
@@ -216,10 +217,10 @@ public class MateriaControllerUnitTest {
         MessageResponseDTO expectedMessageResponse = MateriaMensagemResponseDTO.builder().build().toResponsePut();
 
         //when
-        when(materiaService.deleteMateriaById(materiaDTO.getId())).thenReturn(expectedMessageResponse);
+        when(materiaService.deleteMateriaById(VALID_MATERIA_ID)).thenReturn(expectedMessageResponse);
 
         //then
-        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + VALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -231,10 +232,10 @@ public class MateriaControllerUnitTest {
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
 
         //when
-        when(materiaService.deleteMateriaById(materiaDTO.getId())).thenThrow(MateriaNotFoundException.class);
+        when(materiaService.deleteMateriaById(INVALID_MATERIA_ID)).thenThrow(MateriaNotFoundException.class);
 
         //then
-        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + INVALID_MATERIA_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
