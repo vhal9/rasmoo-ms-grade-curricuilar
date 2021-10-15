@@ -208,4 +208,37 @@ public class MateriaControllerUnitTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void quandoDELETEEhChamadoParaUmaMateriaERetornaSucesso() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        MessageResponseDTO expectedMessageResponse = MateriaMensagemResponseDTO.builder().build().toResponsePut();
+
+        //when
+        when(materiaService.deleteMateriaById(materiaDTO.getId())).thenReturn(expectedMessageResponse);
+
+        //then
+        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void quandoDELETEEhChamadoParaUmaMateriaInexistenteEntaoRetornaExcecao() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaService.deleteMateriaById(materiaDTO.getId())).thenThrow(MateriaNotFoundException.class);
+
+        //then
+        mockMvc.perform(delete(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
 }
