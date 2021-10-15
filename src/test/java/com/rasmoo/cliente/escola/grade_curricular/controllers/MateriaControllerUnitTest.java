@@ -24,8 +24,7 @@ import static com.rasmoo.cliente.escola.grade_curricular.utils.JsonConvertionUti
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -168,6 +167,42 @@ public class MateriaControllerUnitTest {
 
         //then
         mockMvc.perform(post(MOVIE_API_URL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void quandoPUTEhChamadoERetornaSucesso() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        MessageResponseDTO expectedMessageResponse = MateriaMensagemResponseDTO.builder().build().toResponsePut();
+
+        //when
+        when(materiaService.updateMateria(materiaDTO.getId(), materiaDTO)).thenReturn(expectedMessageResponse);
+
+        //then
+        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus", is(200)))
+                .andExpect(jsonPath("$.data.id", is(expectedMessageResponse.getId().intValue())))
+                .andExpect(jsonPath("$.data.message", is(expectedMessageResponse.getMessage())));
+    }
+
+    @Test
+    public void quandoPUTEhChamadoParaUmaMateriaInexistenteEntaoRetornaExcecao() throws Exception {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaService.updateMateria(materiaDTO.getId(), materiaDTO)).thenThrow(MateriaNotFoundException.class);
+
+        //then
+        mockMvc.perform(put(MOVIE_API_URL_PATH + "/" + materiaDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(materiaDTO)))
                 .andExpect(status().isBadRequest());
