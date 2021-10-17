@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MateriaServiceUnitTest {
@@ -190,6 +190,35 @@ public class MateriaServiceUnitTest {
 
         //then
         assertThrows(MateriaNotFoundException.class, () -> materiaService.updateMateria(INVALID_MATERIA_ID, materiaDTO));
+
+    }
+
+    @Test
+    public void quandoDeletarMateriaEhChamadoComIdValidoEntaoRetornaMensagemDeSucesso() throws MateriaNotFoundException {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        Materia expectedDeleteMateria = materiaMapper.toModel(materiaDTO);
+        MessageResponseDTO expectedDeleteMessage = MateriaMensagemResponseDTO.builder().build().toResponseDelete();
+
+        //when
+        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(expectedDeleteMateria));
+        doNothing().when(materiaRepository).deleteById(VALID_MATERIA_ID);
+
+        //then
+        MessageResponseDTO deleteMessageResponse = materiaService.deleteMateriaById(VALID_MATERIA_ID);
+        assertThat(deleteMessageResponse, is(equalTo(expectedDeleteMessage)));
+
+    }
+
+    @Test
+    public void quandoDeletarMateriaEhChamadoComIdInvalidoEntaoRetornaExcecao() throws MateriaNotFoundException {
+
+        //when
+        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(MateriaNotFoundException.class, () -> materiaService.deleteMateriaById(INVALID_MATERIA_ID));
 
     }
 
