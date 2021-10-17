@@ -1,9 +1,11 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
 import org.junit.jupiter.api.Test;
@@ -137,6 +139,24 @@ public class MateriaServiceUnitTest {
 
         //then
         assertThrows(MateriaNotFoundException.class, () -> materiaService.findMateriasByIds(listaDeIds));
+
+    }
+
+    @Test
+    public void quandoCriarMateriaEhChamadoEntaoRetornaSucesso() {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        Materia expectedSavedMateria = materiaMapper.toModel(materiaDTO);
+        MessageResponseDTO expectedSavedMessage = MateriaMensagemResponseDTO.builder().build().toResponsePost();
+
+        //when
+        when(materiaRepository.save(expectedSavedMateria)).thenReturn(expectedSavedMateria);
+
+        //then
+        MessageResponseDTO createdMessage  = materiaService.createMateria(materiaDTO);
+
+        assertThat(createdMessage, is(equalTo(expectedSavedMessage)));
 
     }
 
