@@ -55,7 +55,7 @@ public class MateriaService {
         Materia materiaToSave = materiaMapper.toModel(materiaDTO);
         Materia savedMateria = materiaRepository.save(materiaToSave);
 
-        return createdMessageResponse(savedMateria.getId(), "Update Materia with ID ");
+        return createdMessageResponse(savedMateria.getId(), "Updated Materia with ID ");
 
     }
 
@@ -65,7 +65,7 @@ public class MateriaService {
 
         materiaRepository.deleteById(id);
 
-        return createdMessageResponse(id, "Delete Materia with ID ");
+        return createdMessageResponse(id, "Deleted Materia with ID ");
 
     }
 
