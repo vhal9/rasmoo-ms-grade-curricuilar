@@ -10,13 +10,13 @@ public class MateriaMensagemResponseDTO {
     private Long id = 1L;
 
     @Builder.Default
-    private String responsePost = "Created Materia with ID 1";
+    private String responsePost = "Created Materia with ID ";
 
     @Builder.Default
-    private String responsePut = "Updated Materia with ID 1";
+    private String responsePut = "Updated Materia with ID ";
 
     @Builder.Default
-    private String responseDelete = "Deleted Materia with ID 1";
+    private String responseDelete = "Deleted Materia with ID ";
 
     public MessageResponseDTO toResponsePost() {
         return MessageResponseDTO
