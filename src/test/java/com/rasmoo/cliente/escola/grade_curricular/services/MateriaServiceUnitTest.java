@@ -143,7 +143,7 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoCriarMateriaEhChamadoEntaoRetornaSucesso() {
+    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -160,6 +160,37 @@ public class MateriaServiceUnitTest {
 
     }
 
+    @Test
+    public void quandoAlterarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws MateriaNotFoundException {
 
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        Materia expectedUpdatedMateria = materiaMapper.toModel(materiaDTO);
+        MessageResponseDTO expectedUpdatedMessage = MateriaMensagemResponseDTO.builder().build().toResponsePut();
+
+        //when
+        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(expectedUpdatedMateria));
+        when(materiaRepository.save(expectedUpdatedMateria)).thenReturn(expectedUpdatedMateria);
+
+        //then
+        MessageResponseDTO updatedMessageResponse  = materiaService.updateMateria(VALID_MATERIA_ID, materiaDTO);
+
+        assertThat(updatedMessageResponse, is(equalTo(expectedUpdatedMessage)));
+
+    }
+
+    @Test
+    public void quandoAlterarMateriaEhChamadoComIdInvalidoEntaoRetornaExcecao() throws MateriaNotFoundException {
+
+        //given
+        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(MateriaNotFoundException.class, () -> materiaService.updateMateria(INVALID_MATERIA_ID, materiaDTO));
+
+    }
 
 }
