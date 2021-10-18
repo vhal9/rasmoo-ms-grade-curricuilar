@@ -85,7 +85,7 @@ public class MateriaControllerIntregatedTest {
     @Test
     public void quandoGETListarTodosEhChamadoERetornaListaDeMateriasVazia() throws Exception {
 
-        this.finish();
+        this.materiaRepository.deleteAll();
 
         ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate
                 .exchange("http://localhost:" + this.port + "/api/materias/",
@@ -101,13 +101,15 @@ public class MateriaControllerIntregatedTest {
     @Test
     public void quandoGETBuscarMateriaPorIdEhChamadoERetornaMateria() throws Exception {
 
+        Long id = this.materiaRepository.findAll().get(0).getId();
+
         ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate
-                .exchange("http://localhost:" + this.port + "/api/materias/1",
+                .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<MateriaDTO>>() {});
         assertNotNull(materia.getBody().getData());
         assertEquals(200, materia.getBody().getHttpStatus());
-        assertEquals(1, materia.getBody().getData().getId().intValue());
+        assertEquals(id, materia.getBody().getData().getId());
         assertEquals("Prog. Orientada a Objetos", materia.getBody().getData().getNome());
         assertEquals("POO", materia.getBody().getData().getCodigo());
         assertEquals(2, materia.getBody().getData().getHoras().intValue());
@@ -117,8 +119,10 @@ public class MateriaControllerIntregatedTest {
     @Test
     public void quandoGETBuscarMateriaPorIdEhChamadoComIdInvalidoERetornaErro() throws Exception {
 
+        Long id = this.materiaRepository.findAll().get(2).getId() + 1;
+
         ResponseEntity<ResponseDTO<String>> materia = restTemplate
-                .exchange("http://localhost:" + this.port + "/api/materias/4",
+                .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<String>>() {});
         assertNotNull(materia.getBody().getData());
