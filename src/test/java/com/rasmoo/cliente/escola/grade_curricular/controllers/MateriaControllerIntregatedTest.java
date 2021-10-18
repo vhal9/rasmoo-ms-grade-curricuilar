@@ -98,4 +98,31 @@ public class MateriaControllerIntregatedTest {
 
     }
 
+    @Test
+    public void quandoGETBuscarMateriaPorIdEhChamadoERetornaMateria() throws Exception {
+
+        ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/1",
+                        HttpMethod.GET, null,
+                        new ParameterizedTypeReference<ResponseDTO<MateriaDTO>>() {});
+        assertNotNull(materia.getBody().getData());
+        assertEquals(200, materia.getBody().getHttpStatus());
+        assertEquals(1, materia.getBody().getData().getId().intValue());
+        assertEquals("Prog. Orientada a Objetos", materia.getBody().getData().getNome());
+        assertEquals("POO", materia.getBody().getData().getCodigo());
+        assertEquals(2, materia.getBody().getData().getHoras().intValue());
+
+    }
+
+    @Test
+    public void quandoGETBuscarMateriaPorIdEhChamadoComIdInvalidoERetornaErro() throws Exception {
+
+        ResponseEntity<ResponseDTO<String>> materia = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/4",
+                        HttpMethod.GET, null,
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+        assertNotNull(materia.getBody().getData());
+        assertEquals(400, materia.getBody().getHttpStatus());
+
+    }
 }
