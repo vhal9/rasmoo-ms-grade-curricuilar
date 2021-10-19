@@ -24,8 +24,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -247,6 +246,51 @@ public class MateriaControllerIntregatedTest {
 
         assertNotNull(response.getBody().getData());
         assertEquals(400, response.getBody().getHttpStatus());
+
+    }
+
+    @Test
+    public void quandoDELETEDeletarMateriaEhChamadoERetornaSucesso() throws Exception {
+
+        //given
+        List<Materia> materias = this.materiaRepository.findAll();
+        Long id = materias.get(0).getId();
+
+        MessageResponseDTO expectedMenssage = MateriaMensagemResponseDTO
+                .builder()
+                .id(id)
+                .build()
+                .toResponseDelete();
+
+        //then
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/" + id,
+                        HttpMethod.DELETE, null,
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(200, response.getBody().getHttpStatus());
+        assertEquals(expectedMenssage, response.getBody().getData());
+        assertNotEquals(materias.size(), this.materiaRepository.findAll().size());
+
+    }
+
+    @Test
+    public void quandoDeleteDeletarMateriaEhChamadoComIdInvalidoERetornaExcecao() throws Exception {
+
+        //given
+        Long idInvalido = this.materiaRepository.findAll().get(0).getId() + 10;
+        String expectedMessage = String.format("Subject with ID %s not found in the system.", idInvalido);
+
+        //then
+        ResponseEntity<ResponseDTO<String>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/" + idInvalido,
+                        HttpMethod.DELETE, null,
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(400, response.getBody().getHttpStatus());
+        assertEquals(expectedMessage, response.getBody().getData());
 
     }
 }
