@@ -194,4 +194,59 @@ public class MateriaControllerIntregatedTest {
         assertEquals(expectedMenssage, response.getBody().getData());
     
     }
+
+    @Test
+    public void quandoPOSTCadastrarMateriaEhChamadoERetornaSucesso() throws Exception {
+
+        //given
+        Long id = this.materiaRepository.findAll().get(2).getId() + 1;
+
+        Materia materia = new Materia();
+        materia.setNome("teste");
+        materia.setHoras(2);
+        materia.setCodigo("teste");
+
+        MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
+
+        MessageResponseDTO expectedMessage = MateriaMensagemResponseDTO
+                .builder()
+                .id(id)
+                .build()
+                .toResponsePost();
+
+        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+
+        //then
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/",
+                        HttpMethod.POST, request,
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(201, response.getBody().getHttpStatus());
+        assertEquals(expectedMessage, response.getBody().getData());
+
+    }
+    @Test
+    public void quandoPOSTCadastrarMateriaComDadosInvalidosEhChamadoERetornaExcecao() throws Exception {
+
+        Materia materia = new Materia();
+        materia.setNome("");
+        materia.setHoras(-2);
+        materia.setCodigo("teste");
+
+        MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
+
+        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+
+        //then
+        ResponseEntity<ResponseDTO<List<String>>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/",
+                        HttpMethod.POST, request,
+                        new ParameterizedTypeReference<ResponseDTO<List<String>>>() {});
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(400, response.getBody().getHttpStatus());
+
+    }
 }
