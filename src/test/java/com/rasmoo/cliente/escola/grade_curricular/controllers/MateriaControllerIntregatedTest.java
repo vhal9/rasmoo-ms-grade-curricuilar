@@ -1,6 +1,9 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
@@ -128,5 +132,66 @@ public class MateriaControllerIntregatedTest {
         assertNotNull(materia.getBody().getData());
         assertEquals(400, materia.getBody().getHttpStatus());
 
+    }
+
+    @Test
+    public void quandoPUTAlterarMateriaEhChamadoERetornaSucesso() throws Exception {
+
+        //given
+        Materia materia = this.materiaRepository.findAll().get(0);
+        materia.setNome("teste");
+        MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
+
+        MessageResponseDTO expectedMenssage = MateriaMensagemResponseDTO
+                .builder()
+                .id(materia.getId())
+                .build()
+                .toResponsePut();
+
+        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+
+        //then
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
+                        HttpMethod.PUT, request,
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+
+        Materia materiaAfterUpdate = this.materiaRepository.findAll().get(0);
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(200, response.getBody().getHttpStatus());
+        assertEquals(expectedMenssage, response.getBody().getData());
+        assertEquals(materia.getNome(), materiaAfterUpdate.getNome());
+
+    }
+
+    @Test
+    public void quandoPUTAlterarMateriaEhChamadoComIdInvalidoERetornaExcecao() throws Exception {
+
+        //given
+        Materia materia = this.materiaRepository.findAll().get(0);
+
+        Long idInvalido = materia.getId() + 10;
+        materia.setId(idInvalido);
+        materia.setNome("teste");
+
+        MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
+
+        String expectedMenssage = String.format("Subject with ID %s not found in the system.", idInvalido);
+
+        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+
+        //then
+        ResponseEntity<ResponseDTO<String>> response = restTemplate
+                .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
+                        HttpMethod.PUT, request,
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+
+        Materia materiaAfterUpdate = this.materiaRepository.findAll().get(0);
+
+        assertNotNull(response.getBody().getData());
+        assertEquals(400, response.getBody().getHttpStatus());
+        assertEquals(expectedMenssage, response.getBody().getData());
+    
     }
 }
