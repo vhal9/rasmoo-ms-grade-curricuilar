@@ -13,6 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+    public static final String CURSO = "Curso";
 
     @Bean
     public Docket gradeCurricularApi() {
@@ -21,7 +22,8 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.rasmoo.cliente.escola.grade_curricular")).build()
-                .apiInfo(this.metaData());
+                .apiInfo(this.metaData())
+                .tags(new Tag(CURSO, "Operaçoes referentes a manipulaçao da entidade Curso."));
 
     }
 
