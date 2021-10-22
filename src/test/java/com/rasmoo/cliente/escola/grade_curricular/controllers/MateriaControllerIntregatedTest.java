@@ -34,6 +34,9 @@ public class MateriaControllerIntregatedTest {
     @LocalServerPort
     private int port;
 
+    private String user = "rasmoo";
+    private String password = "msgradecurricular";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -74,7 +77,7 @@ public class MateriaControllerIntregatedTest {
     @Test
     public void quandoGETListarTodosEhChamadoERetornaListaDeMaterias() throws Exception {
 
-        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate
+        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<List<MateriaDTO>>>() {
@@ -90,7 +93,7 @@ public class MateriaControllerIntregatedTest {
 
         this.materiaRepository.deleteAll();
 
-        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate
+        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<List<MateriaDTO>>>() {
@@ -106,7 +109,7 @@ public class MateriaControllerIntregatedTest {
 
         Long id = this.materiaRepository.findAll().get(0).getId();
 
-        ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate
+        ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<MateriaDTO>>() {});
@@ -124,7 +127,7 @@ public class MateriaControllerIntregatedTest {
 
         Long id = this.materiaRepository.findAll().get(2).getId() + 1;
 
-        ResponseEntity<ResponseDTO<String>> materia = restTemplate
+        ResponseEntity<ResponseDTO<String>> materia = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<String>>() {});
@@ -150,7 +153,7 @@ public class MateriaControllerIntregatedTest {
         HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
                         HttpMethod.PUT, request,
                         new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
@@ -181,7 +184,7 @@ public class MateriaControllerIntregatedTest {
         HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<String>> response = restTemplate
+        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
                         HttpMethod.PUT, request,
                         new ParameterizedTypeReference<ResponseDTO<String>>() {});
@@ -216,7 +219,7 @@ public class MateriaControllerIntregatedTest {
         HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.POST, request,
                         new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
@@ -239,7 +242,7 @@ public class MateriaControllerIntregatedTest {
         HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<List<String>>> response = restTemplate
+        ResponseEntity<ResponseDTO<List<String>>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.POST, request,
                         new ParameterizedTypeReference<ResponseDTO<List<String>>>() {});
@@ -263,7 +266,7 @@ public class MateriaControllerIntregatedTest {
                 .toResponseDelete();
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.DELETE, null,
                         new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
@@ -283,7 +286,7 @@ public class MateriaControllerIntregatedTest {
         String expectedMessage = String.format("Subject with ID %s not found in the system.", idInvalido);
 
         //then
-        ResponseEntity<ResponseDTO<String>> response = restTemplate
+        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(this.user, this.password)
                 .exchange("http://localhost:" + this.port + "/api/materias/" + idInvalido,
                         HttpMethod.DELETE, null,
                         new ParameterizedTypeReference<ResponseDTO<String>>() {});
