@@ -8,7 +8,7 @@
 
 Este repositorio contém uma API de uma grade curricular desenvolvida durante os cursos de [Java Back-End Engineer com SpringBoot](https://cursos.rasmoo.com/12594-java-back-end-engineer-com-springboot) e [Spring Security OAuth2](https://cursos.rasmoo.com/13826-spring-security-oauth2). 
 
-Este curso teve ênfase no Java com Spring Boot, Web, Data e Security.
+Este curso teve ênfase no Java com Spring Boot, Web, Data e Security e em Testes Unitários utilizando o JUnit.
 
 A aplicação foi desenvolvida utilizando Java em conjunto do Framework Spring e utilizado o Swagger para a documentação da mesma. 
 
@@ -23,6 +23,8 @@ A aplicação foi desenvolvida utilizando Java em conjunto do Framework Spring e
 - JAVA
 - Spring Boot
 - Lombok
+- JUnit
+- Mockito
 - H2 Database
 - Postgresql
 - Swagger
