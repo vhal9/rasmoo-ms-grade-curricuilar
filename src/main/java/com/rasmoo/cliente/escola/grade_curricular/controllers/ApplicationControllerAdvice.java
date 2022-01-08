@@ -1,30 +1,25 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.*;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.services.CreateResponseErroService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ApplicationControllerAdvice {
+public class ApplicationControllerAdvice extends CreateResponseErroService {
 
     @ExceptionHandler(MateriaNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleMateriaNotFoundException(MateriaNotFoundException ex) {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(ex.getMessage());
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -32,16 +27,8 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
-        List<String> erros = ex.getBindingResult().getAllErrors()
-                .stream()
-                .map( erro -> erro.getDefaultMessage())
-                .collect(Collectors.toList());
+        return createResponseErroWithListMessageAndBadRequestStatus(ex);
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(erros);
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
 
     }
 
@@ -49,11 +36,7 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleSendIdException(SendIdException ex) {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(ex.getMessage());
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -61,13 +44,36 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleCursoNotFoundException(CursoNotFoundException ex) {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(ex.getMessage());
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
+    @ExceptionHandler(EmailExistenteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleEmailExistenteException(EmailExistenteException ex) {
+
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
+
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
+
+    }
+
+    @ExceptionHandler(UserNotAuthorizeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseDTO<String> handleUserNotAuthorizeException(UserNotAuthorizeException ex) {
+        return createResponseErroWithMessageAndUnauthorizedStatus(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
+    }
 
 }

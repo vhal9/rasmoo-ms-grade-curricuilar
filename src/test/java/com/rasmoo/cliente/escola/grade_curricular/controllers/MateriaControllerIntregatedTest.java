@@ -1,12 +1,15 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.builders.UsuarioBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
+import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
+import com.rasmoo.cliente.escola.grade_curricular.repositories.UsuarioRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +23,12 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,14 +38,17 @@ public class MateriaControllerIntregatedTest {
     @LocalServerPort
     private int port;
 
-    private String user = "rasmoo";
-    private String password = "msgradecurricular";
-
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Autowired
     private MateriaRepository materiaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @BeforeEach
     void init() {
@@ -54,6 +61,10 @@ public class MateriaControllerIntregatedTest {
     }
 
     private void populaBaseDeDados() {
+
+        Usuario user = mockUsuario();
+        user.getCredencial().setSenha(encoder.encode(user.getCredencial().getSenha()));
+        usuarioRepository.save(user);
 
         Materia materia1 = new Materia();
         materia1.setNome("Prog. Orientada a Objetos");
@@ -74,14 +85,22 @@ public class MateriaControllerIntregatedTest {
 
     }
 
-    @Test
-    public void quandoGETListarTodosEhChamadoERetornaListaDeMaterias() throws Exception {
+    private Usuario mockUsuario() {
+        return UsuarioBuilder.builder().build().toUsuario();
+    }
 
-        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(this.user, this.password)
+    @Test
+    public void quandoGETListarTodosEhChamadoERetornaListaDeMaterias() {
+
+        Usuario user = mockUsuario();
+
+        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<List<MateriaDTO>>>() {
                         });
+        assertNotNull(materias.getBody());
         assertNotNull(materias.getBody().getData());
         assertEquals(200, materias.getBody().getHttpStatus());
         assertEquals(3, materias.getBody().getData().size());
@@ -89,15 +108,18 @@ public class MateriaControllerIntregatedTest {
     }
 
     @Test
-    public void quandoGETListarTodosEhChamadoERetornaListaDeMateriasVazia() throws Exception {
+    public void quandoGETListarTodosEhChamadoERetornaListaDeMateriasVazia() {
 
+        Usuario user = mockUsuario();
         this.materiaRepository.deleteAll();
 
-        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<List<MateriaDTO>>> materias = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.GET, null,
                         new ParameterizedTypeReference<ResponseDTO<List<MateriaDTO>>>() {
                         });
+        assertNotNull(materias.getBody());
         assertNotNull(materias.getBody().getData());
         assertEquals(200, materias.getBody().getHttpStatus());
         assertEquals(0, materias.getBody().getData().size());
@@ -105,14 +127,19 @@ public class MateriaControllerIntregatedTest {
     }
 
     @Test
-    public void quandoGETBuscarMateriaPorIdEhChamadoERetornaMateria() throws Exception {
+    public void quandoGETBuscarMateriaPorIdEhChamadoERetornaMateria() {
 
+        Usuario user = mockUsuario();
         Long id = this.materiaRepository.findAll().get(0).getId();
 
-        ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<MateriaDTO>> materia = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
-                        new ParameterizedTypeReference<ResponseDTO<MateriaDTO>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<MateriaDTO>>() {
+                        });
+
+        assertNotNull(materia.getBody());
         assertNotNull(materia.getBody().getData());
         assertEquals(200, materia.getBody().getHttpStatus());
         assertEquals(id, materia.getBody().getData().getId());
@@ -123,23 +150,29 @@ public class MateriaControllerIntregatedTest {
     }
 
     @Test
-    public void quandoGETBuscarMateriaPorIdEhChamadoComIdInvalidoERetornaErro() throws Exception {
+    public void quandoGETBuscarMateriaPorIdEhChamadoComIdInvalidoERetornaErro() {
 
-        Long id = this.materiaRepository.findAll().get(2).getId() + 1;
+        Usuario user = mockUsuario();
+        long id = this.materiaRepository.findAll().get(2).getId() + 1;
 
-        ResponseEntity<ResponseDTO<String>> materia = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<String>> materia = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.GET, null,
-                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {
+                        });
+
+        assertNotNull(materia.getBody());
         assertNotNull(materia.getBody().getData());
         assertEquals(400, materia.getBody().getHttpStatus());
 
     }
 
     @Test
-    public void quandoPUTAlterarMateriaEhChamadoERetornaSucesso() throws Exception {
+    public void quandoPUTAlterarMateriaEhChamadoERetornaSucesso() {
 
         //given
+        Usuario user = mockUsuario();
         Materia materia = this.materiaRepository.findAll().get(0);
         materia.setNome("teste");
         MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
@@ -150,16 +183,19 @@ public class MateriaControllerIntregatedTest {
                 .build()
                 .toResponsePut();
 
-        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+        HttpEntity<MateriaDTO> request = new HttpEntity<>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
                         HttpMethod.PUT, request,
-                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {
+                        });
 
         Materia materiaAfterUpdate = this.materiaRepository.findAll().get(0);
 
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(200, response.getBody().getHttpStatus());
         assertEquals(expectedMenssage, response.getBody().getData());
@@ -168,9 +204,10 @@ public class MateriaControllerIntregatedTest {
     }
 
     @Test
-    public void quandoPUTAlterarMateriaEhChamadoComIdInvalidoERetornaExcecao() throws Exception {
+    public void quandoPUTAlterarMateriaEhChamadoComIdInvalidoERetornaExcecao() {
 
         //given
+        Usuario user = mockUsuario();
         Materia materia = this.materiaRepository.findAll().get(0);
 
         Long idInvalido = materia.getId() + 10;
@@ -181,26 +218,28 @@ public class MateriaControllerIntregatedTest {
 
         String expectedMenssage = String.format("Subject with ID %s not found in the system.", idInvalido);
 
-        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+        HttpEntity<MateriaDTO> request = new HttpEntity<>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + materia.getId(),
                         HttpMethod.PUT, request,
-                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {
+                        });
 
-        Materia materiaAfterUpdate = this.materiaRepository.findAll().get(0);
-
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(400, response.getBody().getHttpStatus());
         assertEquals(expectedMenssage, response.getBody().getData());
-    
+
     }
 
     @Test
-    public void quandoPOSTCadastrarMateriaEhChamadoERetornaSucesso() throws Exception {
+    public void quandoPOSTCadastrarMateriaEhChamadoERetornaSucesso() {
 
         //given
+        Usuario user = mockUsuario();
         Long id = this.materiaRepository.findAll().get(2).getId() + 1;
 
         Materia materia = new Materia();
@@ -216,22 +255,27 @@ public class MateriaControllerIntregatedTest {
                 .build()
                 .toResponsePost();
 
-        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+        HttpEntity<MateriaDTO> request = new HttpEntity<>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.POST, request,
-                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {
+                        });
 
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(201, response.getBody().getHttpStatus());
         assertEquals(expectedMessage, response.getBody().getData());
 
     }
-    @Test
-    public void quandoPOSTCadastrarMateriaComDadosInvalidosEhChamadoERetornaExcecao() throws Exception {
 
+    @Test
+    public void quandoPOSTCadastrarMateriaComDadosInvalidosEhChamadoERetornaExcecao() {
+
+        Usuario user = mockUsuario();
         Materia materia = new Materia();
         materia.setNome("");
         materia.setHoras(-2);
@@ -239,23 +283,27 @@ public class MateriaControllerIntregatedTest {
 
         MateriaDTO materiaDTO = MateriaMapper.INSTANCE.toDTO(materia);
 
-        HttpEntity<MateriaDTO> request = new HttpEntity<MateriaDTO>(materiaDTO);
+        HttpEntity<MateriaDTO> request = new HttpEntity<>(materiaDTO);
 
         //then
-        ResponseEntity<ResponseDTO<List<String>>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<List<String>>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/",
                         HttpMethod.POST, request,
-                        new ParameterizedTypeReference<ResponseDTO<List<String>>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<List<String>>>() {
+                        });
 
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(400, response.getBody().getHttpStatus());
 
     }
 
     @Test
-    public void quandoDELETEDeletarMateriaEhChamadoERetornaSucesso() throws Exception {
+    public void quandoDELETEDeletarMateriaEhChamadoERetornaSucesso() {
 
         //given
+        Usuario user = mockUsuario();
         List<Materia> materias = this.materiaRepository.findAll();
         Long id = materias.get(0).getId();
 
@@ -266,11 +314,14 @@ public class MateriaControllerIntregatedTest {
                 .toResponseDelete();
 
         //then
-        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<MessageResponseDTO>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + id,
                         HttpMethod.DELETE, null,
-                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<MessageResponseDTO>>() {
+                        });
 
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(200, response.getBody().getHttpStatus());
         assertEquals(expectedMenssage, response.getBody().getData());
@@ -279,18 +330,22 @@ public class MateriaControllerIntregatedTest {
     }
 
     @Test
-    public void quandoDeleteDeletarMateriaEhChamadoComIdInvalidoERetornaExcecao() throws Exception {
+    public void quandoDeleteDeletarMateriaEhChamadoComIdInvalidoERetornaExcecao() {
 
         //given
+        Usuario user = mockUsuario();
         Long idInvalido = this.materiaRepository.findAll().get(0).getId() + 10;
         String expectedMessage = String.format("Subject with ID %s not found in the system.", idInvalido);
 
         //then
-        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(this.user, this.password)
+        ResponseEntity<ResponseDTO<String>> response = restTemplate.withBasicAuth(
+                        user.getCredencial().getEmail(), user.getCredencial().getSenha())
                 .exchange("http://localhost:" + this.port + "/api/materias/" + idInvalido,
                         HttpMethod.DELETE, null,
-                        new ParameterizedTypeReference<ResponseDTO<String>>() {});
+                        new ParameterizedTypeReference<ResponseDTO<String>>() {
+                        });
 
+        assertNotNull(response.getBody());
         assertNotNull(response.getBody().getData());
         assertEquals(400, response.getBody().getHttpStatus());
         assertEquals(expectedMessage, response.getBody().getData());
