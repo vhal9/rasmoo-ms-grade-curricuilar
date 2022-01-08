@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.models.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -27,5 +28,8 @@ public class Materia {
     @Column(name = "codigo", length = 10, nullable = false)
     private String codigo;
 
+    @ManyToOne
+    @JsonIgnore
+    private Usuario usuario;
 
 }
