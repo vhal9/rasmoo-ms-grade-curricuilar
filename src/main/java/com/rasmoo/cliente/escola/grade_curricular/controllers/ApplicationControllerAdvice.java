@@ -5,7 +5,7 @@ import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteExcep
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import com.rasmoo.cliente.escola.grade_curricular.services.CreateResponseErroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ApplicationControllerAdvice {
+public class ApplicationControllerAdvice extends CreateResponseErroService {
 
     @ExceptionHandler(MateriaNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleMateriaNotFoundException(MateriaNotFoundException ex) {
 
-        return createResponseErroWithMessage(ex.getMessage());
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -31,16 +30,8 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
-        List<String> erros = ex.getBindingResult().getAllErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.toList());
+        return createResponseErroWithListMessageAndBadRequestStatus(ex);
 
-        ResponseDTO<List<String>> responseDTO = new ResponseDTO();
-        responseDTO.setData(erros);
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
 
     }
 
@@ -48,7 +39,7 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleSendIdException(SendIdException ex) {
 
-        return createResponseErroWithMessage(ex.getMessage());
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -56,7 +47,7 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleCursoNotFoundException(CursoNotFoundException ex) {
 
-        return createResponseErroWithMessage(ex.getMessage());
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -64,7 +55,7 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleEmailExistenteException(EmailExistenteException ex) {
 
-        return createResponseErroWithMessage(ex.getMessage());
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
 
@@ -72,19 +63,8 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
 
-        return createResponseErroWithMessage(ex.getMessage());
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
     }
-
-    private ResponseDTO<String> createResponseErroWithMessage(String message) {
-
-        ResponseDTO<String> responseDTO = new ResponseDTO();
-        responseDTO.setData(message);
-        responseDTO.setHttpStatus(HttpStatus.BAD_REQUEST.value());
-
-        return responseDTO;
-
-    }
-
 
 }
