@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         String[] allowed = new String[]{
-                "/webjars", "/api/usuarios", "static/**"
+                "/webjars", "/api/usuarios", "static/**", "/h2-console/**"
         };
 
         http.csrf().disable()
@@ -40,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(allowed).permitAll()
                 .anyRequest()
                 .authenticated()
+                .and().headers().frameOptions().sameOrigin()
                 .and()
                 .httpBasic();
     }
