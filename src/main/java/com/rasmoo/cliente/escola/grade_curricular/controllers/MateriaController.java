@@ -13,23 +13,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = SwaggerConfig.Materia)
 @RestController
 @RequestMapping("/api/materias")
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MateriaController {
 
     private MateriaService materiaService;
-
-    @Autowired
-    MateriaController(MateriaService materiaService) {
-        this.materiaService = materiaService;
-    }
 
     @ApiOperation(value = "Buscar todas as materias.")
     @ApiResponses(value = {
@@ -38,9 +36,9 @@ public class MateriaController {
 
     })
     @GetMapping
-    public ResponseDTO<MateriaDTO> listMaterias () throws UserNotFoundException {
+    public ResponseDTO<List<MateriaDTO>> listMaterias () throws UserNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        ResponseDTO<List<MateriaDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.listMaterias());
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
@@ -59,7 +57,7 @@ public class MateriaController {
     public ResponseDTO<MateriaDTO> getMateriaById(@PathVariable Long id)
             throws MateriaNotFoundException, UserNotFoundException, UserNotAuthorizeException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        ResponseDTO<MateriaDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.getMateriaById(id));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
@@ -82,7 +80,7 @@ public class MateriaController {
         if(materiaDTO.getId() != null)
             throw new SendIdException("materia");
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.createMateria(materiaDTO));
         responseDTO.setHttpStatus(HttpStatus.CREATED.value());
 
@@ -101,7 +99,7 @@ public class MateriaController {
     public ResponseDTO<MessageResponseDTO> update(@Valid @PathVariable Long id, @RequestBody MateriaDTO materiaDTO)
             throws UserNotFoundException, MateriaNotFoundException, UserNotAuthorizeException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.updateMateria(id, materiaDTO));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
@@ -120,7 +118,7 @@ public class MateriaController {
     public ResponseDTO<MessageResponseDTO> delete(@PathVariable Long id)
             throws UserNotFoundException, MateriaNotFoundException, UserNotAuthorizeException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.deleteMateriaById(id));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
