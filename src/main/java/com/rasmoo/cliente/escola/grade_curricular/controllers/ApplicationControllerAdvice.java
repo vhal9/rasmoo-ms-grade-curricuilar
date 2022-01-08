@@ -1,9 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.*;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.services.CreateResponseErroService;
 import org.springframework.http.HttpStatus;
@@ -65,6 +62,18 @@ public class ApplicationControllerAdvice extends CreateResponseErroService {
 
         return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
 
+    }
+
+    @ExceptionHandler(UserNotAuthorizeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseDTO<String> handleUserNotAuthorizeException(UserNotAuthorizeException ex) {
+        return createResponseErroWithMessageAndUnauthorizedStatus(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return createResponseErroWithMessageAndBadRequestStatus(ex.getMessage());
     }
 
 }
