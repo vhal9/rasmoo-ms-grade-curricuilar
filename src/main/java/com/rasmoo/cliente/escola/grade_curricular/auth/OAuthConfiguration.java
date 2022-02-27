@@ -39,7 +39,7 @@ public class OAuthConfiguration {
                     .and()
                     .withClient("cliente-canva")
                     .secret("$2a$10$XFNAXsGXXyiKA7OD2jpq3ulKYOtr2VGEscFr/I7xdg1uUZkSHR4j6")
-                    .authorizedGrantTypes("authorization_code")
+                    .authorizedGrantTypes("authorization_code", "implicit")
                     .redirectUris("https://www.canva.com/pt_br/")
                     .scopes("read")
                     .resourceIds(RESOURCE_ID);
