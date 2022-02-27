@@ -33,7 +33,7 @@ public class OAuthConfiguration {
             clients.inMemory()
                     .withClient("cliente-web")
                     .secret("$2a$10$XFNAXsGXXyiKA7OD2jpq3ulKYOtr2VGEscFr/I7xdg1uUZkSHR4j6")
-                    .authorizedGrantTypes("password")
+                    .authorizedGrantTypes("password", "client_credentials")
                     .scopes("read", "write")
                     .resourceIds(RESOURCE_ID)
                     .and()
