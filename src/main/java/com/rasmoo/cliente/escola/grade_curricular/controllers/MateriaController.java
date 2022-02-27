@@ -23,7 +23,7 @@ import java.util.List;
 
 @Api(tags = SwaggerConfig.Materia)
 @RestController
-@RequestMapping("/api/materias")
+@RequestMapping({"/api/v1/materias", "/api/v2/materias"})
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MateriaController {
 
