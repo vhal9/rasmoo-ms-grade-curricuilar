@@ -3,6 +3,8 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotAuthorizeException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
@@ -41,7 +43,7 @@ public class MateriaServiceUnitTest {
     private MateriaService materiaService;
 
     @Test
-    public void quandoListarTodasMateriasEhChamadoUmaListaDeveSerRetornada() {
+    public void quandoListarTodasMateriasEhChamadoUmaListaDeveSerRetornada() throws UserNotFoundException {
 
         //given
         MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -59,7 +61,7 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoListarTodasMateriasEhChamadoUmaListaVaziaDeveSerRetornada() {
+    public void quandoListarTodasMateriasEhChamadoUmaListaVaziaDeveSerRetornada() throws UserNotFoundException {
 
         //when
         when(materiaRepository.findAll()).thenReturn(Collections.emptyList());
@@ -72,7 +74,8 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoGetMateriaEhChamadoComIdValidoDeveSerRetornadoUmaMateria() throws MateriaNotFoundException {
+    public void quandoGetMateriaEhChamadoComIdValidoDeveSerRetornadoUmaMateria()
+            throws MateriaNotFoundException, UserNotFoundException, UserNotAuthorizeException {
 
         //given
         MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -143,7 +146,7 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() {
+    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws Exception {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -161,7 +164,7 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoAlterarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws MateriaNotFoundException {
+    public void quandoAlterarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws Exception {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
@@ -194,7 +197,7 @@ public class MateriaServiceUnitTest {
     }
 
     @Test
-    public void quandoDeletarMateriaEhChamadoComIdValidoEntaoRetornaMensagemDeSucesso() throws MateriaNotFoundException {
+    public void quandoDeletarMateriaEhChamadoComIdValidoEntaoRetornaMensagemDeSucesso() throws Exception {
 
         //given
         MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();

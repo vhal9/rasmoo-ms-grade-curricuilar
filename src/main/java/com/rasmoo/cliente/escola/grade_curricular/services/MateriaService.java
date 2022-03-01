@@ -1,17 +1,24 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotAuthorizeException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
+import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
+import com.rasmoo.cliente.escola.grade_curricular.repositories.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -23,55 +30,86 @@ public class MateriaService {
 
     private final MateriaMapper materiaMapper = MateriaMapper.INSTANCE;
 
-    public List<MateriaDTO> listMaterias() {
+    private UsuarioRepository usuarioRepository;
 
-        List<Materia> allMaterias = materiaRepository.findAll();
+    public List<MateriaDTO> listMaterias() throws UserNotFoundException {
 
-        return allMaterias.stream().map(materia -> materiaMapper.toDTO(materia)).collect(Collectors.toList());
+        Usuario usuario = this.findAuthUser();
+        List<Materia> allMaterias = materiaRepository.findAllByUsuarioId(usuario.getId());
+
+        return allMaterias.stream().map(materiaMapper::toDTO).collect(Collectors.toList());
 
     }
 
-    public MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException {
+    public MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException, UserNotFoundException, UserNotAuthorizeException {
+
+        Usuario usuario = this.findAuthUser();
 
         Materia materia = findMateriaById(id);
 
-        return materiaMapper.toDTO(materia);
+        if (materia.getUsuario().equals(usuario)) {
 
+            return materiaMapper.toDTO(materia);
+
+        } else {
+            throw new UserNotAuthorizeException(usuario.getCredencial().getEmail());
+        }
     }
 
-    public MessageResponseDTO createMateria(MateriaDTO materiaDTO) {
+    public MessageResponseDTO createMateria(MateriaDTO materiaDTO) throws UserNotFoundException {
+
+        Usuario usuario = this.findAuthUser();
 
         Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+        materiaToSave.setUsuario(usuario);
         Materia savedMateria = materiaRepository.save(materiaToSave);
 
         return createdMessageResponse(savedMateria.getId(), "Created Materia with ID ");
     }
 
-    public MessageResponseDTO updateMateria(Long id, MateriaDTO materiaDTO) throws MateriaNotFoundException {
+    public MessageResponseDTO updateMateria(Long id, MateriaDTO materiaDTO) throws UserNotFoundException,
+            MateriaNotFoundException, UserNotAuthorizeException {
 
-        verifyIfMateriaExists(id);
+        Usuario usuario = this.findAuthUser();
+        Materia materia = findMateriaById(id);
 
-        materiaDTO.setId(id);
-        Materia materiaToSave = materiaMapper.toModel(materiaDTO);
-        Materia savedMateria = materiaRepository.save(materiaToSave);
+        if (materia.getUsuario().equals(usuario)) {
 
-        return createdMessageResponse(savedMateria.getId(), "Updated Materia with ID ");
+            materiaDTO.setId(id);
+            Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+            materiaToSave.setUsuario(usuario);
+            Materia savedMateria = materiaRepository.save(materiaToSave);
+
+            return createdMessageResponse(savedMateria.getId(), "Updated Materia with ID ");
+
+        } else {
+            throw new UserNotAuthorizeException(usuario.getCredencial().getEmail());
+        }
 
     }
 
-    public MessageResponseDTO deleteMateriaById(Long id) throws MateriaNotFoundException {
+    public MessageResponseDTO deleteMateriaById(Long id) throws UserNotFoundException,
+            MateriaNotFoundException, UserNotAuthorizeException {
 
-        verifyIfMateriaExists(id);
+        Usuario usuario = this.findAuthUser();
+        Materia materia = findMateriaById(id);
 
-        materiaRepository.deleteById(id);
+        if (materia.getUsuario().equals(usuario)) {
 
-        return createdMessageResponse(id, "Deleted Materia with ID ");
+            materiaRepository.deleteById(id);
+            return createdMessageResponse(id, "Deleted Materia with ID ");
+
+        } else {
+
+            throw new UserNotAuthorizeException(usuario.getCredencial().getEmail());
+
+        }
 
     }
 
     public List<Materia> findMateriasByIds(List<Long> ids) throws MateriaNotFoundException {
 
-        List<Materia> materias = new ArrayList();
+        List<Materia> materias = new ArrayList<>();
 
         for (Long id : ids) {
 
@@ -93,12 +131,6 @@ public class MateriaService {
 
     }
 
-    private void verifyIfMateriaExists(Long id) throws MateriaNotFoundException {
-
-        findMateriaById(id);
-
-    }
-
     private Materia findMateriaById(Long id) throws MateriaNotFoundException {
 
         return materiaRepository.findById(id)
@@ -106,4 +138,14 @@ public class MateriaService {
 
     }
 
+    private Usuario findAuthUser() throws UserNotFoundException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Optional<Usuario> user = usuarioRepository.findByCredencial_Email(auth.getName());
+
+        if (!user.isPresent()) {
+            throw new UserNotFoundException(auth.getName());
+        }
+        return user.get();
+    }
 }
