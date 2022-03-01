@@ -1,6 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.UsuarioDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Credencial;
@@ -36,6 +37,21 @@ public class UsuarioService {
         Optional<Usuario> user = usuarioRepository.findByCredencial_Email(email);
         return user;
     }
+
+    public String alterarSenhaUsuario(UsuarioDTO usuarioDTO) throws UserNotFoundException {
+
+        Optional<Usuario> userOptional = findUsuarioPorEmail(usuarioDTO.getEmail());
+
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(usuarioDTO.getEmail());
+        }
+
+        Usuario user = userOptional.get();
+        user.getCredencial().setSenha(pass.encode(usuarioDTO.getSenha()));
+
+        return "Senha alterada para o usuario " + user.getCredencial().getEmail();
+    }
+
 
     private Usuario getUsuarioFromDTO(UsuarioDTO usuarioDTO) {
 
