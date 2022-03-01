@@ -8,11 +8,13 @@ import com.rasmoo.cliente.escola.grade_curricular.services.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/usuarios")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@PreAuthorize(value = "#oauth2.hasScope('cw_nao_logado')")
 public class UsuarioController {
 
     private UsuarioService usuarioService;
