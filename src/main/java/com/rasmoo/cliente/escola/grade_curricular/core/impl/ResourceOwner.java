@@ -2,9 +2,12 @@ package com.rasmoo.cliente.escola.grade_curricular.core.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ResourceOwner implements UserDetails {
 
@@ -16,7 +19,9 @@ public class ResourceOwner implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<SimpleGrantedAuthority> roles = new ArrayList<>();
+        roles.add(new SimpleGrantedAuthority(this.usuario.getRole()));
+        return roles;
     }
 
     @Override

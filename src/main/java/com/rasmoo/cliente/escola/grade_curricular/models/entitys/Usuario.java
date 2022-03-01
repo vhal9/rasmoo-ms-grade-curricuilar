@@ -24,6 +24,9 @@ public class Usuario {
     @Column(name = "nome")
     private String nome;
 
+    @Column(name = "role")
+    private String role = "ROLE_CUSTOMER";
+
     @JsonIgnore
     @Column(name = "credencial")
     private Credencial credencial;
