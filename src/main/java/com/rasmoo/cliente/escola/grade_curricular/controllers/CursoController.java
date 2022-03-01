@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/cursos")
 @CrossOrigin
-@PreAuthorize(value = "#oauth2.hasScope('cw_logado')")
+@PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_CUSTOMER')")
 public class CursoController {
 
     private CursoService cursoService;
