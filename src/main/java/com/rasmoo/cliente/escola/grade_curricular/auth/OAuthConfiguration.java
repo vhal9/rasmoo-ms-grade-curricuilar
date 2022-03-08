@@ -1,6 +1,8 @@
 package com.rasmoo.cliente.escola.grade_curricular.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,40 +16,60 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.JdbcApprovalStore;
 import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class OAuthConfiguration {
 
-    public static final String RESOURCE_ID = "financesControll";
+    public static final String RESOURCE_ID = "gradeControll";
 
     @EnableAuthorizationServer
     public static class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 
         @Autowired
+        private ClientDetailsService clientDetailsService;
+
+        @Autowired
         private AuthenticationManager authenticationManager;
+
+        @Autowired
+        @Qualifier("dsOAuth")
+        private DataSource dataSource;
+
+        @Bean
+        public TokenStore tokenStore() {
+            return new JdbcTokenStore(dataSource);
+        }
+
+        @Bean
+        public ApprovalStore approvalStore() {
+            return new JdbcApprovalStore(dataSource);
+        }
 
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-            endpoints.authenticationManager(authenticationManager);
+
+            DefaultOAuth2RequestFactory requestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+            requestFactory.setCheckUserScopes(Boolean.TRUE);
+
+            endpoints
+                    .authenticationManager(authenticationManager)
+                    .requestFactory(requestFactory)
+                    .approvalStore(this.approvalStore())
+                    .tokenStore(this.tokenStore());
         }
 
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            clients.inMemory()
-                    .withClient("cliente-web")
-                    .secret("$2a$10$XFNAXsGXXyiKA7OD2jpq3ulKYOtr2VGEscFr/I7xdg1uUZkSHR4j6")
-                    .authorizedGrantTypes("password", "client_credentials", "refresh_token")
-                    .scopes("cw_logado", "cw_nao_logado")
-                    .accessTokenValiditySeconds(121)
-                    .resourceIds(RESOURCE_ID)
-                    .and()
-                    .withClient("cliente-canva")
-                    .secret("$2a$10$XFNAXsGXXyiKA7OD2jpq3ulKYOtr2VGEscFr/I7xdg1uUZkSHR4j6")
-                    .authorizedGrantTypes("authorization_code", "implicit")
-                    .redirectUris("https://www.canva.com/pt_br/")
-                    .scopes("cc_logado")
-                    .resourceIds(RESOURCE_ID);
+            clients.jdbc(this.dataSource);
         }
     }
 
