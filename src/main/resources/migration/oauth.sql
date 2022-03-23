@@ -70,4 +70,4 @@ insert into	oauth_client_details (client_id, client_secret, scope, authorized_gr
     access_token_validity, refresh_token_validity, web_server_redirect_uri,additional_information, autoapprove)
 
 values ('cliente-web', '$2a$10$XFNAXsGXXyiKA7OD2jpq3ulKYOtr2VGEscFr/I7xdg1uUZkSHR4j6','cw_logado,cw_nao_logado',
-        'password,client_credentials', 'gradeControll','cw_logado,cw_nao_logado', 3601, -1, '', null, 'false')
+        'password,client_credentials,refresh_token', 'gradeControll','cw_logado,cw_nao_logado', 3601, -1, '', null, 'false')
