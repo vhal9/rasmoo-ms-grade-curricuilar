@@ -17,3 +17,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+host:
+  full:
+    dns:
+      auth:
+        link: http://localhost:8081/oauth/token
