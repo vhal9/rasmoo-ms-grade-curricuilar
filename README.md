@@ -68,11 +68,12 @@ http://localhost:8081/swagger-ui/index.html
 - Melhorar Documentação de apresentação:
   - Banco Oauth
   - Roteiro de execução do projeto
+- Criar Mappers manualmente
 - Adicionar application's para diferentes ambientes
 - Corrigir execução no heroku
 - Refatorar dtos de retorno
 - Corrigir impactos nos testes unitarios
-- Inserir nos testes unitários verificação de número de chamadas de funções 
+- Inserir nos testes unitários verificação de número de chamadas de funções
 
 
 
