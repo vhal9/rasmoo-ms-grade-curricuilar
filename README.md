@@ -69,6 +69,7 @@ http://localhost:8081/swagger-ui/index.html
   - Banco Oauth
   - Roteiro de execução do projeto
 - Criar Mappers manualmente
+- Separar textos em um arquivo properties ou yml
 - Adicionar application's para diferentes ambientes
 - Corrigir execução no heroku
 - Refatorar dtos de retorno
