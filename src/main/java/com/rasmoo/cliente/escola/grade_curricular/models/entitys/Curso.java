@@ -5,13 +5,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_curso")
-public class Curso {
+public class Curso implements Serializable {
 
     @Id
     @GeneratedValue(generator = "increment")

@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         String[] allowed = new String[]{
-                "/webjars", "/api/usuarios", "static/**", "/h2-console/**"
+                "/webjars", "/api/usuarios", "static/**", "/h2-console/**", "/swagger*/**"
         };
 
         http.csrf().disable()

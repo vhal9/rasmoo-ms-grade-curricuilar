@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_user")
-public class Usuario {
+public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -23,6 +24,9 @@ public class Usuario {
 
     @Column(name = "nome")
     private String nome;
+
+    @Column(name = "role")
+    private String role = "ROLE_CUSTOMER";
 
     @JsonIgnore
     @Column(name = "credencial")

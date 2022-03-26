@@ -14,6 +14,9 @@ public class UsuarioBuilder {
     private String nome = "teste";
 
     @Builder.Default
+    private String role = "ROLE_CUSTOMER";
+
+    @Builder.Default
     private Credencial credencial = new Credencial();
 
     public Usuario toUsuario() {
@@ -21,6 +24,7 @@ public class UsuarioBuilder {
         credencial.setSenha("1111");
         return new Usuario(id,
                 nome,
+                role,
                 credencial);
     }
 }

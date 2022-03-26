@@ -4,12 +4,15 @@ import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteExcep
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.UsuarioDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import com.rasmoo.cliente.escola.grade_curricular.services.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/usuarios")
@@ -36,7 +39,20 @@ public class UsuarioController {
         ResponseDTO responseDTO = new ResponseDTO<>();
 
         responseDTO.setData(usuarioService.alterarSenhaUsuario(usuarioDTO));
-        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
+
+        return responseDTO;
+
+    }
+
+    @GetMapping
+    @PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_ADM')")
+    public ResponseDTO<List<Usuario>> listarUsuarios() {
+
+        ResponseDTO responseDTO = new ResponseDTO<>();
+
+        responseDTO.setData(usuarioService.listarUsuarios());
+        responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
 
