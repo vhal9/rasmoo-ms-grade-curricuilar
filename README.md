@@ -30,7 +30,8 @@ A aplicação foi desenvolvida utilizando Java em conjunto do Framework Spring e
 - Swagger
 - Heroku
 - Travis CI
-
+- OAuth2
+- JWT
 ## Acesso
 
 O projeto se encontra em funcionamento no heroku pelo link
@@ -59,9 +60,19 @@ File -> Open -> Selecione a raiz do projeto
 
 Acesso a aplicação pelo link:
 ```
-http://localhost:8081/swagger-ui.html
+http://localhost:8081/swagger-ui/index.html
 ```
 
+## Features
+
+- Melhorar Documentação de apresentação:
+  - Banco Oauth
+  - Roteiro de execução do projeto
+- Adicionar application's para diferentes ambientes
+- Corrigir execução no heroku
+- Refatorar dtos de retorno
+- Corrigir impactos nos testes unitarios
+- Inserir nos testes unitários verificação de número de chamadas de funções 
 
 
 
