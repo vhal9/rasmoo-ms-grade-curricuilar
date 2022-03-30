@@ -97,7 +97,7 @@ public class MateriaController {
 
     })
     @PutMapping("{id}")
-    public ResponseDTO<MessageResponseDTO> update(@Valid @PathVariable Long id, @RequestBody MateriaDTO materiaDTO)
+    public ResponseDTO<MessageResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MateriaDTO materiaDTO)
             throws UserNotFoundException, MateriaNotFoundException, UserNotAuthorizeException {
 
         ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();

@@ -1,5 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.models.dto;
 
+import com.rasmoo.cliente.escola.grade_curricular.utils.Messages;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,16 +19,16 @@ public class MateriaDTO {
 
     private Long id;
 
-    @NotEmpty(message = "Nome field is required")
-    @Size(min = 3, max = 30, message = "Nome field must be between 3 and 30")
+    @NotEmpty(message = Messages.MATERIA_CAMPO_NOME_OBRIGATORIO)
+    @Size(min = 3, max = 30, message = Messages.MATERIA_CAMPO_NOME_TAMANHO)
     private String nome;
 
-    @NotNull(message = "Horas field is required")
-    @Min(value = 0, message = "Horas field must be greater than 0")
+    @NotNull(message = Messages.MATERIA_CAMPO_HORAS_OBRIGATORIO)
+    @Min(value = 1, message = Messages.MATERIA_CAMPO_HORAS_TAMANHO)
     private Integer horas;
 
-    @NotEmpty(message = "Codigo field is required")
-    @Size(min = 3, max = 10, message = "Codigo field must be between 3 and 10")
+    @NotEmpty(message = Messages.MATERIA_CAMPO_CODIGO_OBRIGATORIO)
+    @Size(min = 3, max = 10, message = Messages.MATERIA_CAMPO_CODIGO_TAMANHO)
     private String codigo;
 
 }
