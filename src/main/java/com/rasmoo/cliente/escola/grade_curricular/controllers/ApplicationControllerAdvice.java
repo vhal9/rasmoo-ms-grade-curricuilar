@@ -65,7 +65,7 @@ public class ApplicationControllerAdvice extends CreateResponseErroService {
     }
 
     @ExceptionHandler(UserNotAuthorizeException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseDTO<String> handleUserNotAuthorizeException(UserNotAuthorizeException ex) {
         return createResponseErroWithMessageAndUnauthorizedStatus(ex.getMessage());
     }
