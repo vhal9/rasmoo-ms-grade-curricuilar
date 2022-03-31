@@ -5,13 +5,13 @@ server:
 spring:
   datasource-gc:
     url: jdbc:postgresql://localhost:5432/grade_curricular
-    username: postgres
-    password: root
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
   datasource-oauth:
     url: jdbc:postgresql://localhost:5432/oauth
-    username: postgres
-    password: root
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
