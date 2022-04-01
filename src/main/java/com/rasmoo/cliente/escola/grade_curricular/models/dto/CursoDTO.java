@@ -25,6 +25,6 @@ public class CursoDTO {
     @Size(min = 3, max = 5, message = "Campo código deve ter entre 3 e 5 caracteres")
     private String codigo;
 
-    private List<Long> idsMaterias;
+    private List<Long> idsMaterias = new ArrayList<>();
 
 }
