@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class MateriaNotFoundException extends Exception {
 
     public MateriaNotFoundException(Long id) {
-        super(String.format("Subject with ID %s not found in the system.", id));
+        super(String.format("Matéria com ID %s não encontrada no sistema.", id));
     }
 
 }
