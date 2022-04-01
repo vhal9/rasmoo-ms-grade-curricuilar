@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserNotAuthorizeException extends Exception {
 
     public UserNotAuthorizeException(String email) {
-        super(String.format("Usuario com email %s nao tem autorizaçao ao recurso", email));
+        super(String.format("Usuário com email %s não tem autorização ao recurso.", email));
     }
 
 }
