@@ -28,7 +28,7 @@ public class MateriaService {
 
     private MateriaRepository materiaRepository;
 
-    private final MateriaMapper materiaMapper = MateriaMapper.INSTANCE;
+    private MateriaMapper materiaMapper;
 
     private UsuarioRepository usuarioRepository;
 
