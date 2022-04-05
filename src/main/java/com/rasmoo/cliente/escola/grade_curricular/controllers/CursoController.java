@@ -2,7 +2,6 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.config.SwaggerConfig;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;

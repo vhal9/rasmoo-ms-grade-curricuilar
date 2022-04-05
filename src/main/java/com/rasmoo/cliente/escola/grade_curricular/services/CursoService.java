@@ -1,13 +1,11 @@
 package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoDTOMapper;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
-import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.CursoRepository;
 import lombok.AllArgsConstructor;
