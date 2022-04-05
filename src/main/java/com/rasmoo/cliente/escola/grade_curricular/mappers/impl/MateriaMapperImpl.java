@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class MateriaMapperImpl implements MateriaMapper {
 
     @Override
-    public Materia toModel(MateriaDTO materiaDTO) {
+    public Materia execute(MateriaDTO materiaDTO) {
         return Materia.builder()
                 .id(materiaDTO.getId())
                 .nome(materiaDTO.getNome())
@@ -18,13 +18,4 @@ public class MateriaMapperImpl implements MateriaMapper {
                 .build();
     }
 
-    @Override
-    public MateriaDTO toDTO(Materia materia) {
-        return MateriaDTO.builder()
-                .id(materia.getId())
-                .nome(materia.getNome())
-                .horas(materia.getHoras())
-                .codigo(materia.getCodigo())
-                .build();
-    }
 }

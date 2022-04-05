@@ -6,9 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface MateriaMapper {
-
-    Materia toModel(MateriaDTO materiaDTO);
-
-    MateriaDTO toDTO(Materia materia);
-
+    Materia execute(MateriaDTO materiaDTO);
 }

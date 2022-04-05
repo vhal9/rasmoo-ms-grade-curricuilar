@@ -3,6 +3,7 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotAuthorizeException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaDTOMapper;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
@@ -30,6 +31,8 @@ public class MateriaService {
 
     private MateriaMapper materiaMapper;
 
+    private MateriaDTOMapper materiaDTOMapper;
+
     private UsuarioRepository usuarioRepository;
 
     public List<MateriaDTO> listMaterias() throws UserNotFoundException {
@@ -37,7 +40,7 @@ public class MateriaService {
         Usuario usuario = this.findAuthUser();
         List<Materia> allMaterias = materiaRepository.findAllByUsuarioId(usuario.getId());
 
-        return allMaterias.stream().map(materiaMapper::toDTO).collect(Collectors.toList());
+        return allMaterias.stream().map(materiaDTOMapper::execute).collect(Collectors.toList());
 
     }
 
@@ -49,7 +52,7 @@ public class MateriaService {
 
         if (materia.getUsuario().equals(usuario)) {
 
-            return materiaMapper.toDTO(materia);
+            return materiaDTOMapper.execute(materia);
 
         } else {
             throw new UserNotAuthorizeException(usuario.getCredencial().getEmail());
@@ -60,7 +63,7 @@ public class MateriaService {
 
         Usuario usuario = this.findAuthUser();
 
-        Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+        Materia materiaToSave = materiaMapper.execute(materiaDTO);
         materiaToSave.setUsuario(usuario);
         Materia savedMateria = materiaRepository.save(materiaToSave);
 
@@ -76,7 +79,7 @@ public class MateriaService {
         if (materia.getUsuario().equals(usuario)) {
 
             materiaDTO.setId(id);
-            Materia materiaToSave = materiaMapper.toModel(materiaDTO);
+            Materia materiaToSave = materiaMapper.execute(materiaDTO);
             materiaToSave.setUsuario(usuario);
             Materia savedMateria = materiaRepository.save(materiaToSave);
 

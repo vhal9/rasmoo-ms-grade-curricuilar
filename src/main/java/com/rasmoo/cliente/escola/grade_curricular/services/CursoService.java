@@ -3,6 +3,7 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
+import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoDTOMapper;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
@@ -21,13 +22,14 @@ public class CursoService {
 
     private CursoRepository cursoRepository;
 
-    private MateriaService materiaService;
+    private CursoMapper cursoMapper;
 
-    private final CursoMapper cursoMapper = CursoMapper.INSTANCE;
+    private CursoDTOMapper cursoDTOMapper;
 
-    public Page<Curso> listAll(Pageable pageable) {
+    public Page<CursoDTO> listAll(Pageable pageable) {
 
-        return cursoRepository.findAll(pageable);
+        Page<Curso> cursosPage = cursoRepository.findAll(pageable);
+        return cursosPage.map(cursoDTOMapper::execute);
 
     }
 
@@ -39,14 +41,12 @@ public class CursoService {
     }
 
 
-    public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws MateriaNotFoundException, SendIdException {
+    public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException {
 
         if (cursoDTO.getId() != null)
             throw new SendIdException("curso");
 
-        Curso cursoToSave = cursoMapper.toModel(cursoDTO);
-
-        cursoToSave.setMaterias(materiaService.findMateriasByIds(cursoDTO.getIdsMaterias()));
+        Curso cursoToSave = cursoMapper.execute(cursoDTO);
 
         Curso savedCurso = cursoRepository.save(cursoToSave);
 
@@ -54,13 +54,11 @@ public class CursoService {
 
     }
 
-    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws MateriaNotFoundException, SendIdException, CursoNotFoundException {
+    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException {
 
         findCursoById(id);
 
-        Curso cursoToSave = cursoMapper.toModel(cursoDTO);
-
-        cursoToSave.setMaterias(materiaService.findMateriasByIds(cursoDTO.getIdsMaterias()));
+        Curso cursoToSave = cursoMapper.execute(cursoDTO);
         cursoToSave.setId(id);
         Curso savedCurso = cursoRepository.save(cursoToSave);
 

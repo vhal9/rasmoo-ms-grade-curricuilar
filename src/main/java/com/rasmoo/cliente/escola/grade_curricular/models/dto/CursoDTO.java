@@ -23,9 +23,9 @@ public class CursoDTO {
     private String nome;
 
     @NotEmpty(message = "{curso.campo-codigo.obrigatorio}")
-    @Size(min = 3, max = 10, message = "{curso.campo-codigo.tamanho}")
+    @Size(min = 3, max = 5, message = "{curso.campo-codigo.tamanho}")
     private String codigo;
 
-    private List<Long> idsMaterias = new ArrayList<>();
+    private List<MateriaDTO> materias = new ArrayList<>();
 
 }
