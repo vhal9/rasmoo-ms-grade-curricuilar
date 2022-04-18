@@ -22,7 +22,6 @@ public class MateriaBuilder {
         return new Materia(id,
                 nome,
                 horas,
-                codigo,
-                UsuarioBuilder.builder().build().toUsuario());
+                codigo);
     }
 }
