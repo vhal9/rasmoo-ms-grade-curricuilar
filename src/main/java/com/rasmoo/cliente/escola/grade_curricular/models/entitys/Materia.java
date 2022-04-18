@@ -33,8 +33,4 @@ public class Materia implements Serializable {
     @Column(name = "codigo", length = 10, nullable = false)
     private String codigo;
 
-    @ManyToOne
-    @JsonIgnore
-    private Usuario usuario;
-
 }

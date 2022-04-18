@@ -3,8 +3,6 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 import com.rasmoo.cliente.escola.grade_curricular.config.SwaggerConfig;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotAuthorizeException;
-import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
@@ -37,7 +35,7 @@ public class MateriaController {
 
     })
     @GetMapping
-    public ResponseDTO<List<MateriaDTO>> listMaterias () throws UserNotFoundException {
+    public ResponseDTO<List<MateriaDTO>> listMaterias () {
 
         ResponseDTO<List<MateriaDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.listMaterias());
@@ -56,7 +54,7 @@ public class MateriaController {
     })
     @GetMapping("{id}")
     public ResponseDTO<MateriaDTO> getMateriaById(@PathVariable Long id)
-            throws MateriaNotFoundException, UserNotFoundException, UserNotAuthorizeException {
+            throws MateriaNotFoundException {
 
         ResponseDTO<MateriaDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.getMateriaById(id));
@@ -76,7 +74,7 @@ public class MateriaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseDTO<MessageResponseDTO> createMateria(@Valid @RequestBody MateriaDTO materiaDTO)
-            throws SendIdException, UserNotFoundException {
+            throws SendIdException {
 
         if(materiaDTO.getId() != null)
             throw new SendIdException("materia");
@@ -98,7 +96,7 @@ public class MateriaController {
     })
     @PutMapping("{id}")
     public ResponseDTO<MessageResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MateriaDTO materiaDTO)
-            throws UserNotFoundException, MateriaNotFoundException, UserNotAuthorizeException {
+            throws MateriaNotFoundException {
 
         ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.updateMateria(id, materiaDTO));
@@ -117,7 +115,7 @@ public class MateriaController {
     })
     @DeleteMapping("{id}")
     public ResponseDTO<MessageResponseDTO> delete(@PathVariable Long id)
-            throws UserNotFoundException, MateriaNotFoundException, UserNotAuthorizeException {
+            throws MateriaNotFoundException {
 
         ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(materiaService.deleteMateriaById(id));
