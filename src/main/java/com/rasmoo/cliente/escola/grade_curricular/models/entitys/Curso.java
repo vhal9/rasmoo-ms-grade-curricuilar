@@ -31,7 +31,9 @@ public class Curso implements Serializable {
     private String codigo;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinTable(name = "tb_curso_materia",
+            joinColumns = @JoinColumn(name = "tb_materia_id"),
+            inverseJoinColumns = @JoinColumn(name = "tb_curso_id"))
     private List<Materia> materias;
 
 }
