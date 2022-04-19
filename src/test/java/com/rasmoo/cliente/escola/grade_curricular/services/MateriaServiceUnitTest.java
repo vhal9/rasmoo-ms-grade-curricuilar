@@ -1,228 +1,80 @@
-//package com.rasmoo.cliente.escola.grade_curricular.services;
-//
-//import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
-//import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
-//import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
-//import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotAuthorizeException;
-//import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
-//import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
-//import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
-//import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
-//import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
-//import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.lang.reflect.Array;
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.Matchers.*;
-//import static org.hamcrest.core.Is.is;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.Mockito.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class MateriaServiceUnitTest {
-//
-//    private static final Long VALID_MATERIA_ID = 1L;
-//    private static final Long INVALID_MATERIA_ID = 2L;
-//
-//    @Mock
-//    private MateriaRepository materiaRepository;
-//
-//    MateriaMapper materiaMapper = MateriaMapper.INSTANCE;
-//
-//    @InjectMocks
-//    private MateriaService materiaService;
-//
-//    @Test
-//    public void quandoListarTodasMateriasEhChamadoUmaListaDeveSerRetornada() throws UserNotFoundException {
-//
-//        //given
-//        MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        Materia expectedFoundMateria = materiaMapper.toModel(expectedFoundMateriaDTO);
-//
-//        //when
-//        when(materiaRepository.findAll()).thenReturn(Collections.singletonList(expectedFoundMateria));
-//
-//        //then
-//        List<MateriaDTO> materiaDTORetornada = materiaService.listMaterias();
-//
-//        assertThat(materiaDTORetornada, is(not(empty())));
-//        assertThat(materiaDTORetornada.get(0), is(equalTo(expectedFoundMateriaDTO)));
-//
-//    }
-//
-//    @Test
-//    public void quandoListarTodasMateriasEhChamadoUmaListaVaziaDeveSerRetornada() throws UserNotFoundException {
-//
-//        //when
-//        when(materiaRepository.findAll()).thenReturn(Collections.emptyList());
-//
-//        //then
-//        List<MateriaDTO> materiaDTORetornada = materiaService.listMaterias();
-//
-//        assertThat(materiaDTORetornada, is(empty()));
-//
-//    }
-//
-//    @Test
-//    public void quandoGetMateriaEhChamadoComIdValidoDeveSerRetornadoUmaMateria()
-//            throws MateriaNotFoundException, UserNotFoundException, UserNotAuthorizeException {
-//
-//        //given
-//        MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        Materia expectedFoundMateria = materiaMapper.toModel(expectedFoundMateriaDTO);
-//
-//        //when
-//        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(expectedFoundMateria));
-//
-//        //then
-//        MateriaDTO materiaDTORetornada = materiaService.getMateriaById(VALID_MATERIA_ID);
-//
-//        assertThat(materiaDTORetornada, is(equalTo(expectedFoundMateriaDTO)));
-//
-//    }
-//
-//    @Test
-//    public void quandoGetMateriaEhChamadoComIdInvalidoDeveSerRetornadoExcecao() throws MateriaNotFoundException {
-//
-//        //when
-//        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
-//
-//        //then
-//        assertThrows(MateriaNotFoundException.class, () -> materiaService.getMateriaById(INVALID_MATERIA_ID));
-//
-//    }
-//
-//    @Test
-//    public void quandoFindMateriasEhChamadoComIdsValidosDeveSerRetornadoUmaListaDeMaterias() throws MateriaNotFoundException {
-//
-//        //given
-//        List<Long> listaDeIds = new ArrayList<>();
-//        listaDeIds.add(1L);
-//        listaDeIds.add(2L);
-//
-//        MateriaDTO expectedFoundMateriaDTO1 = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        MateriaDTO expectedFoundMateriaDTO2 = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        expectedFoundMateriaDTO2.setId(2L);
-//
-//        Materia expectedFoundMateria1 = materiaMapper.toModel(expectedFoundMateriaDTO1);
-//        Materia expectedFoundMateria2 = materiaMapper.toModel(expectedFoundMateriaDTO2);
-//
-//        //when
-//        when(materiaRepository.findById(1L)).thenReturn(Optional.of(expectedFoundMateria1));
-//        when(materiaRepository.findById(2L)).thenReturn(Optional.of(expectedFoundMateria2));
-//
-//        //then
-//        List<Materia> materiasRetornada = materiaService.findMateriasByIds(listaDeIds);
-//
-//        assertThat(materiasRetornada, is(not(empty())));
-//        assertThat(materiasRetornada.get(0), is(equalTo(expectedFoundMateria1)));
-//        assertThat(materiasRetornada.get(1), is(equalTo(expectedFoundMateria2)));
-//
-//    }
-//
-//    @Test
-//    public void quandoFindMateriasEhChamadoComIdsInvalidosDeveSerRetornadoUmaExcecao() throws MateriaNotFoundException {
-//
-//        //given
-//        List<Long> listaDeIds = new ArrayList<>();
-//        listaDeIds.add(INVALID_MATERIA_ID);
-//
-//        //when
-//        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
-//
-//        //then
-//        assertThrows(MateriaNotFoundException.class, () -> materiaService.findMateriasByIds(listaDeIds));
-//
-//    }
-//
-//    @Test
-//    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws Exception {
-//
-//        //given
-//        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        Materia expectedSavedMateria = materiaMapper.toModel(materiaDTO);
-//        MessageResponseDTO expectedSavedMessage = MateriaMensagemResponseDTO.builder().build().toResponsePost();
-//
-//        //when
-//        when(materiaRepository.save(expectedSavedMateria)).thenReturn(expectedSavedMateria);
-//
-//        //then
-//        MessageResponseDTO createdMessage  = materiaService.createMateria(materiaDTO);
-//
-//        assertThat(createdMessage, is(equalTo(expectedSavedMessage)));
-//
-//    }
-//
-//    @Test
-//    public void quandoAlterarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws Exception {
-//
-//        //given
-//        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        Materia expectedUpdatedMateria = materiaMapper.toModel(materiaDTO);
-//        MessageResponseDTO expectedUpdatedMessage = MateriaMensagemResponseDTO.builder().build().toResponsePut();
-//
-//        //when
-//        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(expectedUpdatedMateria));
-//        when(materiaRepository.save(expectedUpdatedMateria)).thenReturn(expectedUpdatedMateria);
-//
-//        //then
-//        MessageResponseDTO updatedMessageResponse  = materiaService.updateMateria(VALID_MATERIA_ID, materiaDTO);
-//
-//        assertThat(updatedMessageResponse, is(equalTo(expectedUpdatedMessage)));
-//
-//    }
-//
-//    @Test
-//    public void quandoAlterarMateriaEhChamadoComIdInvalidoEntaoRetornaExcecao() throws MateriaNotFoundException {
-//
-//        //given
-//        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//
-//        //when
-//        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
-//
-//        //then
-//        assertThrows(MateriaNotFoundException.class, () -> materiaService.updateMateria(INVALID_MATERIA_ID, materiaDTO));
-//
-//    }
-//
-//    @Test
-//    public void quandoDeletarMateriaEhChamadoComIdValidoEntaoRetornaMensagemDeSucesso() throws Exception {
-//
-//        //given
-//        MateriaDTO materiaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
-//        Materia expectedDeleteMateria = materiaMapper.toModel(materiaDTO);
-//        MessageResponseDTO expectedDeleteMessage = MateriaMensagemResponseDTO.builder().build().toResponseDelete();
-//
-//        //when
-//        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(expectedDeleteMateria));
-//        doNothing().when(materiaRepository).deleteById(VALID_MATERIA_ID);
-//
-//        //then
-//        MessageResponseDTO deleteMessageResponse = materiaService.deleteMateriaById(VALID_MATERIA_ID);
-//        assertThat(deleteMessageResponse, is(equalTo(expectedDeleteMessage)));
-//
-//    }
-//
-//    @Test
-//    public void quandoDeletarMateriaEhChamadoComIdInvalidoEntaoRetornaExcecao() throws MateriaNotFoundException {
-//
-//        //when
-//        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
-//
-//        //then
-//        assertThrows(MateriaNotFoundException.class, () -> materiaService.deleteMateriaById(INVALID_MATERIA_ID));
-//
-//    }
-//
-//}
+package com.rasmoo.cliente.escola.grade_curricular.services;
+
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaDTOMapperImpl;
+import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaMapperImpl;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
+import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class MateriaServiceUnitTest {
+
+    @Mock
+    private MateriaRepository materiaRepository;
+
+    @Mock
+    private MateriaDTOMapperImpl materiaDTOMapper;
+
+    @Mock
+    private MateriaMapperImpl materiaMapper;
+
+    @InjectMocks
+    private MateriaService materiaService;
+
+    @Test
+    public void QuandoListarTodasMateriasEhChamadoUmaListaDeveSerRetornada() {
+        //given
+        Materia materiaMock = MateriaBuilder.builder().build().toMateria();
+        MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        //when
+        when(materiaRepository.findAll()).thenReturn(Collections.singletonList(materiaMock));
+        when(materiaDTOMapper.execute(materiaMock)).thenReturn(expectedFoundMateriaDTO);
+
+        List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
+
+        //then
+        verify(materiaRepository, times(1)).findAll();
+        verify(materiaDTOMapper, times(1)).execute(materiaMock);
+        assertThat(listaMateriasRetornada, is(not(empty())));
+        assertThat(listaMateriasRetornada.size(), is(equalTo(1)));
+        assertThat(listaMateriasRetornada.get(0), is(equalTo(expectedFoundMateriaDTO)));
+
+    }
+
+    @Test
+    public void quandoListarTodasMateriasEhChamadoUmaListaVaziaDeveSerRetornada() {
+
+        //when
+        when(materiaRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
+
+        //then
+        verify(materiaRepository, times(1)).findAll();
+        assertThat(listaMateriasRetornada, is(empty()));
+        assertThat(listaMateriasRetornada.size(), is(equalTo(0)));
+
+    }
+}
