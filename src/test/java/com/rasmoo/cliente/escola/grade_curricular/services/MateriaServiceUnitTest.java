@@ -2,6 +2,7 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaDTOMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,12 +25,17 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MateriaServiceUnitTest {
+
+    private static final Long VALID_MATERIA_ID = 1L;
+    private static final Long INVALID_MATERIA_ID = 2L;
 
     @Mock
     private MateriaRepository materiaRepository;
@@ -76,6 +83,39 @@ public class MateriaServiceUnitTest {
         verify(materiaRepository, times(1)).findAll();
         assertThat(listaMateriasRetornada, is(empty()));
         assertThat(listaMateriasRetornada.size(), is(equalTo(0)));
+
+    }
+
+    @Test
+    public void quandoBuscarMateriaComIdValidoAMateriaDeveSerRetornada() throws MateriaNotFoundException {
+
+        //given
+        Materia materiaMock = MateriaBuilder.builder().build().toMateria();
+        MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+
+        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(materiaMock));
+        when(materiaDTOMapper.execute(materiaMock)).thenReturn(expectedFoundMateriaDTO);
+
+        //when
+        MateriaDTO materiaDTORetornada = materiaService.getMateriaById(VALID_MATERIA_ID);
+
+        //then
+        verify(materiaRepository, times(1)).findById(VALID_MATERIA_ID);
+        verify(materiaDTOMapper, times(1)).execute(materiaMock);
+        assertThat(materiaDTORetornada, is(equalTo(expectedFoundMateriaDTO)));
+
+    }
+
+    @Test
+    public void quandoBuscarMateriaComIdInvalidoUmaExcecaoDeveSerRetornada() {
+
+        //given
+        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(MateriaNotFoundException.class, () -> materiaService.getMateriaById(INVALID_MATERIA_ID));
+        verify(materiaRepository, times(1)).findById(INVALID_MATERIA_ID);
+        verify(materiaDTOMapper, times(0)).execute(any());
 
     }
 }
