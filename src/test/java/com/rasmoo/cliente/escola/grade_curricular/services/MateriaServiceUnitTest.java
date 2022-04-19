@@ -48,10 +48,10 @@ public class MateriaServiceUnitTest {
         Materia materiaMock = MateriaBuilder.builder().build().toMateria();
         MateriaDTO expectedFoundMateriaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
 
-        //when
         when(materiaRepository.findAll()).thenReturn(Collections.singletonList(materiaMock));
         when(materiaDTOMapper.execute(materiaMock)).thenReturn(expectedFoundMateriaDTO);
 
+        //when
         List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
 
         //then
@@ -66,9 +66,10 @@ public class MateriaServiceUnitTest {
     @Test
     public void quandoListarTodasMateriasEhChamadoUmaListaVaziaDeveSerRetornada() {
 
-        //when
+        //given
         when(materiaRepository.findAll()).thenReturn(Collections.emptyList());
 
+        //when
         List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
 
         //then
