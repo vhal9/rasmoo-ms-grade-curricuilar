@@ -2,10 +2,12 @@ package com.rasmoo.cliente.escola.grade_curricular.services;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
+import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaDTOMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
 
@@ -118,4 +120,26 @@ public class MateriaServiceUnitTest {
         verify(materiaDTOMapper, times(0)).execute(any());
 
     }
+
+    @Test
+    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() {
+
+        //given
+        MateriaDTO materiaASerCriadaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        Materia materiaASerCriada = MateriaBuilder.builder().build().toMateria();
+        MessageResponseDTO mensagemEsperada = MateriaMensagemResponseDTO.builder().build().toResponsePost();
+
+        when(materiaMapper.execute(materiaASerCriadaDTO)).thenReturn(materiaASerCriada);
+        when(materiaRepository.save(materiaASerCriada)).thenReturn(materiaASerCriada);
+
+        //when
+        MessageResponseDTO mensagemRetornada = materiaService.createMateria(materiaASerCriadaDTO);
+
+        //then
+        verify(materiaMapper, times(1)).execute(materiaASerCriadaDTO);
+        verify(materiaRepository, times(1)).save(materiaASerCriada);
+        assertThat(mensagemRetornada, is(equalTo(mensagemEsperada)));
+
+    }
+
 }
