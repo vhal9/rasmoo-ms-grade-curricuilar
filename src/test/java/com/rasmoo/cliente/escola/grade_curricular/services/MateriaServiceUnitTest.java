@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -179,4 +180,36 @@ public class MateriaServiceUnitTest {
 
     }
 
+    @Test
+    public void quandoExcluirMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws Exception {
+
+        //given
+        Materia materiaASerExcluida = MateriaBuilder.builder().build().toMateria();
+        MessageResponseDTO mensagemEsperada = MateriaMensagemResponseDTO.builder().build().toResponseDelete();
+
+        when(materiaRepository.findById(VALID_MATERIA_ID)).thenReturn(Optional.of(materiaASerExcluida));
+        doNothing().when(materiaRepository).delete(materiaASerExcluida);
+
+        //when
+        MessageResponseDTO mensagemRetornada = materiaService.deleteMateriaById(VALID_MATERIA_ID);
+
+        //then
+        verify(materiaRepository, times(1)).findById(VALID_MATERIA_ID);
+        verify(materiaRepository, times(1)).delete(materiaASerExcluida);
+        assertThat(mensagemRetornada, is(equalTo(mensagemEsperada)));
+
+    }
+
+    @Test
+    public void quandoExcluirMateriaEhChamadoComIdInvalidoEntaoRetornaMateriaNotFoundException() {
+
+        //given
+
+        when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(MateriaNotFoundException.class,
+                () -> materiaService.deleteMateriaById(INVALID_MATERIA_ID));
+
+    }
 }
