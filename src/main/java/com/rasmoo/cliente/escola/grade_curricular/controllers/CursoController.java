@@ -6,19 +6,19 @@ import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundExce
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
-import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
-import com.rasmoo.cliente.escola.grade_curricular.services.impl.CursoServiceImpl;
+import com.rasmoo.cliente.escola.grade_curricular.services.CursoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +29,10 @@ import javax.validation.Valid;
 @RequestMapping("/api/cursos")
 @CrossOrigin
 @PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_CUSTOMER')")
+@RequiredArgsConstructor
 public class CursoController {
 
-    private CursoServiceImpl cursoServiceImpl;
-
-    @Autowired
-    CursoController(CursoServiceImpl cursoServiceImpl) {
-        this.cursoServiceImpl = cursoServiceImpl;
-    }
+    private final CursoService cursoService;
 
     @ApiOperation(value = "Buscar todos os cursos.")
     @ApiResponses(value = {
@@ -45,18 +41,12 @@ public class CursoController {
 
     })
     @GetMapping
-    public ResponseDTO<Page<Curso>> listAllCursos(
+    public ResponseEntity<Page<CursoDTO>> listAllCursos(
             @PageableDefault(sort = "nome",
-                    direction = Sort.Direction.ASC,
-                    page = 0,
-                    size = 5)
+                    direction = Sort.Direction.ASC)
                     Pageable pageable){
 
-        ResponseDTO responseDTO = new ResponseDTO<>();
-        responseDTO.setData(cursoServiceImpl.listAll(pageable));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(cursoService.listAll(pageable), HttpStatus.OK);
 
     }
 
@@ -68,13 +58,9 @@ public class CursoController {
 
     })
     @GetMapping ("/{id}")
-    public ResponseDTO<Curso> findCursoById(@PathVariable Long id) throws CursoNotFoundException {
+    public ResponseEntity<Curso> findCursoById(@PathVariable Long id) throws CursoNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoServiceImpl.findCursoById(id));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(cursoService.findCursoById(id), HttpStatus.OK);
 
     }
 
@@ -87,13 +73,9 @@ public class CursoController {
     })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseDTO<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException {
+    public ResponseEntity<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoServiceImpl.createCurso(cursoDTO));
-        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(cursoService.createCurso(cursoDTO), HttpStatus.CREATED);
 
     }
 
@@ -105,13 +87,9 @@ public class CursoController {
 
     })
     @PutMapping("/{id}")
-    public ResponseDTO<MessageResponseDTO> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException {
+    public ResponseEntity<MessageResponseDTO> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoServiceImpl.updateCurso(id, cursoDTO));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(cursoService.updateCurso(id, cursoDTO), HttpStatus.OK);
 
     }
 
@@ -123,13 +101,9 @@ public class CursoController {
 
     })
     @DeleteMapping("/{id}")
-    public ResponseDTO<MessageResponseDTO> deleteCurso(@PathVariable Long id) throws CursoNotFoundException {
+    public ResponseEntity<MessageResponseDTO> deleteCurso(@PathVariable Long id) throws CursoNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoServiceImpl.deleteCurso(id));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(cursoService.deleteCurso(id), HttpStatus.OK);
 
     }
 
