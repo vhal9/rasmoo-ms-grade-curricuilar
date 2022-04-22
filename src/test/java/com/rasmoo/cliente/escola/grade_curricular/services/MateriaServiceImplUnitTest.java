@@ -11,6 +11,7 @@ import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.MateriaRepository;
 
+import com.rasmoo.cliente.escola.grade_curricular.services.impl.MateriaServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MateriaServiceUnitTest {
+public class MateriaServiceImplUnitTest {
 
     private static final Long VALID_MATERIA_ID = 1L;
     private static final Long INVALID_MATERIA_ID = 2L;
@@ -50,7 +51,7 @@ public class MateriaServiceUnitTest {
     private MateriaMapperImpl materiaMapper;
 
     @InjectMocks
-    private MateriaService materiaService;
+    private MateriaServiceImpl materiaServiceImpl;
 
     @Test
     public void QuandoListarTodasMateriasEhChamadoUmaListaDeveSerRetornada() {
@@ -62,7 +63,7 @@ public class MateriaServiceUnitTest {
         when(materiaDTOMapper.execute(materiaMock)).thenReturn(expectedFoundMateriaDTO);
 
         //when
-        List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
+        List<MateriaDTO> listaMateriasRetornada = materiaServiceImpl.listMaterias();
 
         //then
         verify(materiaRepository, times(1)).findAll();
@@ -80,7 +81,7 @@ public class MateriaServiceUnitTest {
         when(materiaRepository.findAll()).thenReturn(Collections.emptyList());
 
         //when
-        List<MateriaDTO> listaMateriasRetornada = materiaService.listMaterias();
+        List<MateriaDTO> listaMateriasRetornada = materiaServiceImpl.listMaterias();
 
         //then
         verify(materiaRepository, times(1)).findAll();
@@ -100,7 +101,7 @@ public class MateriaServiceUnitTest {
         when(materiaDTOMapper.execute(materiaMock)).thenReturn(expectedFoundMateriaDTO);
 
         //when
-        MateriaDTO materiaDTORetornada = materiaService.getMateriaById(VALID_MATERIA_ID);
+        MateriaDTO materiaDTORetornada = materiaServiceImpl.getMateriaById(VALID_MATERIA_ID);
 
         //then
         verify(materiaRepository, times(1)).findById(VALID_MATERIA_ID);
@@ -116,7 +117,7 @@ public class MateriaServiceUnitTest {
         when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
 
         //then
-        assertThrows(MateriaNotFoundException.class, () -> materiaService.getMateriaById(INVALID_MATERIA_ID));
+        assertThrows(MateriaNotFoundException.class, () -> materiaServiceImpl.getMateriaById(INVALID_MATERIA_ID));
         verify(materiaRepository, times(1)).findById(INVALID_MATERIA_ID);
         verify(materiaDTOMapper, times(0)).execute(any());
 
@@ -134,7 +135,7 @@ public class MateriaServiceUnitTest {
         when(materiaRepository.save(materiaASerCriada)).thenReturn(materiaASerCriada);
 
         //when
-        MessageResponseDTO mensagemRetornada = materiaService.createMateria(materiaASerCriadaDTO);
+        MessageResponseDTO mensagemRetornada = materiaServiceImpl.createMateria(materiaASerCriadaDTO);
 
         //then
         verify(materiaMapper, times(1)).execute(materiaASerCriadaDTO);
@@ -156,7 +157,7 @@ public class MateriaServiceUnitTest {
         when(materiaRepository.save(materiaASerAlterada)).thenReturn(materiaASerAlterada);
 
         //when
-        MessageResponseDTO mensagemRetornada = materiaService.updateMateria(VALID_MATERIA_ID, materiaASerAlteradaDTO);
+        MessageResponseDTO mensagemRetornada = materiaServiceImpl.updateMateria(VALID_MATERIA_ID, materiaASerAlteradaDTO);
 
         //then
         verify(materiaRepository, times(1)).findById(VALID_MATERIA_ID);
@@ -176,7 +177,7 @@ public class MateriaServiceUnitTest {
 
         //then
         assertThrows(MateriaNotFoundException.class,
-                () -> materiaService.updateMateria(INVALID_MATERIA_ID, materiaASerAlteradaDTO));
+                () -> materiaServiceImpl.updateMateria(INVALID_MATERIA_ID, materiaASerAlteradaDTO));
 
     }
 
@@ -191,7 +192,7 @@ public class MateriaServiceUnitTest {
         doNothing().when(materiaRepository).delete(materiaASerExcluida);
 
         //when
-        MessageResponseDTO mensagemRetornada = materiaService.deleteMateriaById(VALID_MATERIA_ID);
+        MessageResponseDTO mensagemRetornada = materiaServiceImpl.deleteMateriaById(VALID_MATERIA_ID);
 
         //then
         verify(materiaRepository, times(1)).findById(VALID_MATERIA_ID);
@@ -204,12 +205,11 @@ public class MateriaServiceUnitTest {
     public void quandoExcluirMateriaEhChamadoComIdInvalidoEntaoRetornaMateriaNotFoundException() {
 
         //given
-
         when(materiaRepository.findById(INVALID_MATERIA_ID)).thenReturn(Optional.empty());
 
         //then
         assertThrows(MateriaNotFoundException.class,
-                () -> materiaService.deleteMateriaById(INVALID_MATERIA_ID));
+                () -> materiaServiceImpl.deleteMateriaById(INVALID_MATERIA_ID));
 
     }
 }
