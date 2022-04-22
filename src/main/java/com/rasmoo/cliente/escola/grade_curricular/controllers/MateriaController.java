@@ -5,15 +5,14 @@ import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundExce
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
-import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,10 +22,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/materias")
 @CrossOrigin
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class MateriaController {
 
-    private MateriaService materiaService;
+    private final MateriaService materiaService;
 
     @ApiOperation(value = "Buscar todas as materias.")
     @ApiResponses(value = {
@@ -35,13 +34,9 @@ public class MateriaController {
 
     })
     @GetMapping
-    public ResponseDTO<List<MateriaDTO>> listMaterias () {
+    public ResponseEntity<List<MateriaDTO>> listMaterias () {
 
-        ResponseDTO<List<MateriaDTO>> responseDTO = new ResponseDTO<>();
-        responseDTO.setData(materiaService.listMaterias());
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(materiaService.listMaterias(), HttpStatus.OK);
 
     }
 
@@ -53,14 +48,10 @@ public class MateriaController {
 
     })
     @GetMapping("{id}")
-    public ResponseDTO<MateriaDTO> getMateriaById(@PathVariable Long id)
+    public ResponseEntity<MateriaDTO> getMateriaById(@PathVariable Long id)
             throws MateriaNotFoundException {
 
-        ResponseDTO<MateriaDTO> responseDTO = new ResponseDTO<>();
-        responseDTO.setData(materiaService.getMateriaById(id));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(materiaService.getMateriaById(id), HttpStatus.OK);
 
     }
 
@@ -73,17 +64,10 @@ public class MateriaController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDTO<MessageResponseDTO> createMateria(@Valid @RequestBody MateriaDTO materiaDTO)
+    public ResponseEntity<MessageResponseDTO> createMateria(@Valid @RequestBody MateriaDTO materiaDTO)
             throws SendIdException {
 
-        if(materiaDTO.getId() != null)
-            throw new SendIdException("materia");
-
-        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
-        responseDTO.setData(materiaService.createMateria(materiaDTO));
-        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(materiaService.createMateria(materiaDTO), HttpStatus.CREATED);
 
     }
 
@@ -95,14 +79,11 @@ public class MateriaController {
 
     })
     @PutMapping("{id}")
-    public ResponseDTO<MessageResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MateriaDTO materiaDTO)
+    public ResponseEntity<MessageResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MateriaDTO materiaDTO)
             throws MateriaNotFoundException {
 
-        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
-        responseDTO.setData(materiaService.updateMateria(id, materiaDTO));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(materiaService.updateMateria(id, materiaDTO),
+                HttpStatus.OK);
 
     }
 
@@ -114,14 +95,10 @@ public class MateriaController {
 
     })
     @DeleteMapping("{id}")
-    public ResponseDTO<MessageResponseDTO> delete(@PathVariable Long id)
+    public ResponseEntity<MessageResponseDTO> delete(@PathVariable Long id)
             throws MateriaNotFoundException {
 
-        ResponseDTO<MessageResponseDTO> responseDTO = new ResponseDTO<>();
-        responseDTO.setData(materiaService.deleteMateriaById(id));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(materiaService.deleteMateriaById(id), HttpStatus.OK);
 
     }
 

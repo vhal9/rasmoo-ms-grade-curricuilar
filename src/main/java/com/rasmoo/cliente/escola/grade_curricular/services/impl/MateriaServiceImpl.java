@@ -1,6 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.services.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaDTOMapper;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.MateriaMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +43,9 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public MessageResponseDTO createMateria(MateriaDTO materiaDTO) {
+    public MessageResponseDTO createMateria(MateriaDTO materiaDTO) throws SendIdException {
+
+        checksIfIdWasSent(materiaDTO);
 
         Materia materiaToSave = materiaMapper.execute(materiaDTO);
         Materia savedMateria = materiaRepository.save(materiaToSave);
@@ -90,5 +94,10 @@ public class MateriaServiceImpl implements MateriaService {
         return materiaRepository.findById(id)
                 .orElseThrow(()-> new MateriaNotFoundException(id));
 
+    }
+
+    private void checksIfIdWasSent(MateriaDTO materiaDTO) throws SendIdException {
+        if(Objects.nonNull(materiaDTO.getId()))
+            throw new SendIdException("materia");
     }
 }
