@@ -87,7 +87,7 @@ public class CursoController {
     })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseDTO<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws SendIdException {
+    public ResponseDTO<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException {
 
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(cursoServiceImpl.createCurso(cursoDTO));
@@ -105,7 +105,7 @@ public class CursoController {
 
     })
     @PutMapping("/{id}")
-    public ResponseDTO<MessageResponseDTO> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoDTO cursoDTO) throws CursoNotFoundException {
+    public ResponseDTO<MessageResponseDTO> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException {
 
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(cursoServiceImpl.updateCurso(id, cursoDTO));

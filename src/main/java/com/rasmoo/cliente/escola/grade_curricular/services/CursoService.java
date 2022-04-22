@@ -14,7 +14,7 @@ public interface CursoService {
     public Page<CursoDTO> listAll(Pageable pageable);
     public Curso findCursoById(Long id) throws CursoNotFoundException;
     public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException;
-    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException;
+    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException;
     public MessageResponseDTO deleteCurso(Long id) throws CursoNotFoundException;
 
 }

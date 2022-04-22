@@ -1,18 +1,23 @@
 package com.rasmoo.cliente.escola.grade_curricular.services.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoDTOMapper;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.CursoMapper;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.CursoRepository;
 import com.rasmoo.cliente.escola.grade_curricular.services.CursoService;
+import com.rasmoo.cliente.escola.grade_curricular.services.MateriaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class CursoServiceImpl implements CursoService {
     private final CursoRepository cursoRepository;
     private final CursoMapper cursoMapper;
     private final CursoDTOMapper cursoDTOMapper;
+    private final MateriaService materiaService;
 
     @Override
     public Page<CursoDTO> listAll(Pageable pageable) {
@@ -39,10 +45,12 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
-    public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException {
+    public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException {
 
         if (cursoDTO.getId() != null)
             throw new SendIdException("curso");
+
+        verificaSeMateriasExistem(cursoDTO.getMaterias());
 
         Curso cursoToSave = cursoMapper.execute(cursoDTO);
 
@@ -53,9 +61,10 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
-    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException {
+    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException {
 
         findCursoById(id);
+        verificaSeMateriasExistem(cursoDTO.getMaterias());
 
         Curso cursoToSave = cursoMapper.execute(cursoDTO);
         cursoToSave.setId(id);
@@ -83,6 +92,14 @@ public class CursoServiceImpl implements CursoService {
                 .message(message + id)
                 .build();
 
+    }
+
+    private void verificaSeMateriasExistem(List<MateriaDTO> materiasDTO) throws MateriaNotFoundException {
+        if (!materiasDTO.isEmpty()) {
+            for (MateriaDTO materia : materiasDTO) {
+                materiaService.getMateriaById(materia.getId());
+            }
+        }
     }
 
 }
