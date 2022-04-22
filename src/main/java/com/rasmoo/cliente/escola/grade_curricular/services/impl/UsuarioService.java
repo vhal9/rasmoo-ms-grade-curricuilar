@@ -1,4 +1,4 @@
-package com.rasmoo.cliente.escola.grade_curricular.services;
+package com.rasmoo.cliente.escola.grade_curricular.services.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;

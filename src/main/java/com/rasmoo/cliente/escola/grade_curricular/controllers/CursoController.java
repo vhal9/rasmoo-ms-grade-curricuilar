@@ -2,12 +2,13 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.config.SwaggerConfig;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.CursoNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.CursoDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Curso;
-import com.rasmoo.cliente.escola.grade_curricular.services.CursoService;
+import com.rasmoo.cliente.escola.grade_curricular.services.impl.CursoServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -30,11 +31,11 @@ import javax.validation.Valid;
 @PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_CUSTOMER')")
 public class CursoController {
 
-    private CursoService cursoService;
+    private CursoServiceImpl cursoServiceImpl;
 
     @Autowired
-    CursoController(CursoService cursoService) {
-        this.cursoService = cursoService;
+    CursoController(CursoServiceImpl cursoServiceImpl) {
+        this.cursoServiceImpl = cursoServiceImpl;
     }
 
     @ApiOperation(value = "Buscar todos os cursos.")
@@ -52,7 +53,7 @@ public class CursoController {
                     Pageable pageable){
 
         ResponseDTO responseDTO = new ResponseDTO<>();
-        responseDTO.setData(cursoService.listAll(pageable));
+        responseDTO.setData(cursoServiceImpl.listAll(pageable));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
@@ -70,7 +71,7 @@ public class CursoController {
     public ResponseDTO<Curso> findCursoById(@PathVariable Long id) throws CursoNotFoundException {
 
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoService.findCursoById(id));
+        responseDTO.setData(cursoServiceImpl.findCursoById(id));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
@@ -89,7 +90,7 @@ public class CursoController {
     public ResponseDTO<MessageResponseDTO> createCurso(@Valid @RequestBody CursoDTO cursoDTO) throws SendIdException {
 
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoService.createCurso(cursoDTO));
+        responseDTO.setData(cursoServiceImpl.createCurso(cursoDTO));
         responseDTO.setHttpStatus(HttpStatus.CREATED.value());
 
         return responseDTO;
@@ -107,7 +108,7 @@ public class CursoController {
     public ResponseDTO<MessageResponseDTO> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoDTO cursoDTO) throws CursoNotFoundException {
 
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoService.updateCurso(id, cursoDTO));
+        responseDTO.setData(cursoServiceImpl.updateCurso(id, cursoDTO));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
@@ -125,7 +126,7 @@ public class CursoController {
     public ResponseDTO<MessageResponseDTO> deleteCurso(@PathVariable Long id) throws CursoNotFoundException {
 
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setData(cursoService.deleteCurso(id));
+        responseDTO.setData(cursoServiceImpl.deleteCurso(id));
         responseDTO.setHttpStatus(HttpStatus.OK.value());
 
         return responseDTO;
