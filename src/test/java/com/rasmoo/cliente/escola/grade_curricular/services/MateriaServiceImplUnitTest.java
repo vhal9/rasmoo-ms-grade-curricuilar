@@ -4,6 +4,7 @@ import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaMensagemResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.MateriaNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.exceptions.SendIdException;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaDTOMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
@@ -124,11 +125,13 @@ public class MateriaServiceImplUnitTest {
     }
 
     @Test
-    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() {
+    public void quandoCriarMateriaEhChamadoEntaoRetornaMensagemDeSucesso() throws SendIdException {
 
         //given
         MateriaDTO materiaASerCriadaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        materiaASerCriadaDTO.setId(null);
         Materia materiaASerCriada = MateriaBuilder.builder().build().toMateria();
+
         MessageResponseDTO mensagemEsperada = MateriaMensagemResponseDTO.builder().build().toResponsePost();
 
         when(materiaMapper.execute(materiaASerCriadaDTO)).thenReturn(materiaASerCriada);
@@ -141,6 +144,19 @@ public class MateriaServiceImplUnitTest {
         verify(materiaMapper, times(1)).execute(materiaASerCriadaDTO);
         verify(materiaRepository, times(1)).save(materiaASerCriada);
         assertThat(mensagemRetornada, is(equalTo(mensagemEsperada)));
+
+    }
+
+    @Test
+    public void quandoCriarMateriaEhChamadoPassandoIdEntaoRetornaSendIdException() {
+
+        //given
+        MateriaDTO materiaASerCriadaDTO = MateriaDTOBuilder.builder().build().toMateriaDTO();
+        materiaASerCriadaDTO.setId(INVALID_MATERIA_ID);
+
+        //then
+        assertThrows(SendIdException.class,
+                () -> materiaServiceImpl.createMateria(materiaASerCriadaDTO));
 
     }
 
