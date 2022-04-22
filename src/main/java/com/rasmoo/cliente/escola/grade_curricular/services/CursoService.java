@@ -11,10 +11,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface CursoService {
 
-    public Page<CursoDTO> listAll(Pageable pageable);
-    public Curso findCursoById(Long id) throws CursoNotFoundException;
-    public MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException;
-    public MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException;
-    public MessageResponseDTO deleteCurso(Long id) throws CursoNotFoundException;
+    Page<CursoDTO> listAll(Pageable pageable);
+    Curso findCursoById(Long id) throws CursoNotFoundException;
+    MessageResponseDTO createCurso(CursoDTO cursoDTO) throws SendIdException, MateriaNotFoundException;
+    MessageResponseDTO updateCurso(Long id, CursoDTO cursoDTO) throws CursoNotFoundException, MateriaNotFoundException;
+    MessageResponseDTO deleteCurso(Long id) throws CursoNotFoundException;
 
 }

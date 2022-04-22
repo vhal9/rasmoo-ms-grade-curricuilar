@@ -8,13 +8,9 @@ import java.util.List;
 
 public interface MateriaService {
 
-    public List<MateriaDTO> listMaterias();
-
-    public MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException;
-
-    public MessageResponseDTO createMateria(MateriaDTO materiaDTO);
-
-    public MessageResponseDTO updateMateria(Long id, MateriaDTO materiaDTO) throws MateriaNotFoundException;
-
-    public MessageResponseDTO deleteMateriaById(Long id) throws MateriaNotFoundException;
+    List<MateriaDTO> listMaterias();
+    MateriaDTO getMateriaById(Long id) throws MateriaNotFoundException;
+    MessageResponseDTO createMateria(MateriaDTO materiaDTO);
+    MessageResponseDTO updateMateria(Long id, MateriaDTO materiaDTO) throws MateriaNotFoundException;
+    MessageResponseDTO deleteMateriaById(Long id) throws MateriaNotFoundException;
 }
