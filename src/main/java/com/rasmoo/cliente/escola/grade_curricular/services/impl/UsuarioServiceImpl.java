@@ -2,13 +2,14 @@ package com.rasmoo.cliente.escola.grade_curricular.services.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.CredencialUsuarioDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.UsuarioDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Credencial;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import com.rasmoo.cliente.escola.grade_curricular.repositories.UsuarioRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rasmoo.cliente.escola.grade_curricular.services.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
-public class UsuarioService {
+@RequiredArgsConstructor
+public class UsuarioServiceImpl implements UsuarioService {
 
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder pass;
 
-    private PasswordEncoder pass;
-
+    @Override
     public MessageResponseDTO createUsuario(UsuarioDTO usuarioDTO) throws EmailExistenteException {
 
         if (isEmailRepetido(usuarioDTO.getEmail())) {
@@ -31,28 +32,30 @@ public class UsuarioService {
 
         Usuario usuario = usuarioRepository.save(this.getUsuarioFromDTO(usuarioDTO));
 
-        return createdMessageResponse(usuario.getId(), "Usuario criado com ID ");
+        return createdMessageResponse(usuario.getId());
     }
 
+    @Override
     public Optional<Usuario> findUsuarioPorEmail(String email) {
-        Optional<Usuario> user = usuarioRepository.findByCredencial_Email(email);
-        return user;
+        return usuarioRepository.findByCredencial_Email(email);
     }
 
-    public String alterarSenhaUsuario(UsuarioDTO usuarioDTO) throws UserNotFoundException {
+    @Override
+    public String alterarSenhaUsuario(CredencialUsuarioDTO credencialUsuarioDTO) throws UserNotFoundException {
 
-        Optional<Usuario> userOptional = findUsuarioPorEmail(usuarioDTO.getEmail());
+        Optional<Usuario> userOptional = findUsuarioPorEmail(credencialUsuarioDTO.getEmail());
 
         if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(usuarioDTO.getEmail());
+            throw new UserNotFoundException(credencialUsuarioDTO.getEmail());
         }
 
         Usuario user = userOptional.get();
-        user.getCredencial().setSenha(pass.encode(usuarioDTO.getSenha()));
+        user.getCredencial().setSenha(pass.encode(credencialUsuarioDTO.getSenha()));
 
         return "Senha alterada para o usuario " + user.getCredencial().getEmail();
     }
 
+    @Override
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
@@ -74,12 +77,12 @@ public class UsuarioService {
         return credencial;
     }
 
-    private MessageResponseDTO createdMessageResponse(Long id, String message) {
+    private MessageResponseDTO createdMessageResponse(Long id) {
 
         return MessageResponseDTO
                 .builder()
                 .id(id)
-                .message(message + id)
+                .message("Usuario criado com ID " + id)
                 .build();
 
     }

@@ -2,13 +2,14 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.EmailExistenteException;
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.UserNotFoundException;
-import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.CredencialUsuarioDTO;
+import com.rasmoo.cliente.escola.grade_curricular.models.dto.MessageResponseDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.UsuarioDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
 import com.rasmoo.cliente.escola.grade_curricular.services.UsuarioService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,45 +17,32 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/usuarios")
-@AllArgsConstructor(onConstructor = @__(@Autowired))
-@PreAuthorize(value = "#oauth2.hasScope('cw_nao_logado')")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseDTO salvarUsuario(@RequestBody UsuarioDTO usuarioDTO) throws EmailExistenteException {
+    @PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_ADM')")
+    public ResponseEntity<MessageResponseDTO> salvarUsuario(@RequestBody UsuarioDTO usuarioDTO) throws EmailExistenteException {
 
-        ResponseDTO responseDTO = new ResponseDTO<>();
-
-        responseDTO.setData(usuarioService.createUsuario(usuarioDTO));
-        responseDTO.setHttpStatus(HttpStatus.CREATED.value());
-
-        return responseDTO;
+        return new ResponseEntity<>(usuarioService.createUsuario(usuarioDTO),
+                HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseDTO atualizarSenha(@RequestBody UsuarioDTO usuarioDTO) throws UserNotFoundException {
+    @PreAuthorize(value = "#oauth2.hasScope('cw_nao_logado') or #oauth2.hasScope('cw_logado')")
+    public ResponseEntity<String> atualizarSenha(@RequestBody CredencialUsuarioDTO credencialUsuarioDTO) throws UserNotFoundException {
 
-        ResponseDTO responseDTO = new ResponseDTO<>();
-
-        responseDTO.setData(usuarioService.alterarSenhaUsuario(usuarioDTO));
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
-
+        return new ResponseEntity<>(usuarioService.alterarSenhaUsuario(credencialUsuarioDTO),
+                HttpStatus.OK);
     }
 
     @GetMapping
     @PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_ADM')")
-    public ResponseDTO<List<Usuario>> listarUsuarios() {
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
 
-        ResponseDTO responseDTO = new ResponseDTO<>();
-
-        responseDTO.setData(usuarioService.listarUsuarios());
-        responseDTO.setHttpStatus(HttpStatus.OK.value());
-
-        return responseDTO;
-
+        return new ResponseEntity<>(usuarioService.listarUsuarios(),
+                HttpStatus.OK);
     }
 }
