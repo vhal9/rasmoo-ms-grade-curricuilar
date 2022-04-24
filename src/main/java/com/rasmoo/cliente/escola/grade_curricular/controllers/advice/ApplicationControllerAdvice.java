@@ -1,4 +1,4 @@
-package com.rasmoo.cliente.escola.grade_curricular.controllers;
+package com.rasmoo.cliente.escola.grade_curricular.controllers.advice;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.*;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
