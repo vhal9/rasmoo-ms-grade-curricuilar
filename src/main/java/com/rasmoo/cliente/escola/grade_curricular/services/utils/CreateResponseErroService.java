@@ -1,4 +1,4 @@
-package com.rasmoo.cliente.escola.grade_curricular.services;
+package com.rasmoo.cliente.escola.grade_curricular.services.utils;
 
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

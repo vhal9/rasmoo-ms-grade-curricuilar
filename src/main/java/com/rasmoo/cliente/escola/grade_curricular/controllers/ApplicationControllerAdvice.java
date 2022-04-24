@@ -2,7 +2,7 @@ package com.rasmoo.cliente.escola.grade_curricular.controllers;
 
 import com.rasmoo.cliente.escola.grade_curricular.exceptions.*;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.ResponseDTO;
-import com.rasmoo.cliente.escola.grade_curricular.services.CreateResponseErroService;
+import com.rasmoo.cliente.escola.grade_curricular.services.utils.CreateResponseErroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
