@@ -1,6 +1,6 @@
 package com.rasmoo.cliente.escola.grade_curricular.auth;
 
-import com.rasmoo.cliente.escola.grade_curricular.services.UserInfoService;
+import com.rasmoo.cliente.escola.grade_curricular.services.impl.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

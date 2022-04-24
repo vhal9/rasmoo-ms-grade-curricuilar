@@ -1,7 +1,8 @@
-package com.rasmoo.cliente.escola.grade_curricular.services;
+package com.rasmoo.cliente.escola.grade_curricular.services.impl;
 
 import com.rasmoo.cliente.escola.grade_curricular.core.impl.ResourceOwner;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Usuario;
+import com.rasmoo.cliente.escola.grade_curricular.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
