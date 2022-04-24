@@ -1,9 +1,7 @@
 package com.rasmoo.cliente.escola.grade_curricular.mappers.Materia;
 
 import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaBuilder;
-import com.rasmoo.cliente.escola.grade_curricular.builders.MateriaDTOBuilder;
 import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaDTOMapperImpl;
-import com.rasmoo.cliente.escola.grade_curricular.mappers.impl.MateriaMapperImpl;
 import com.rasmoo.cliente.escola.grade_curricular.models.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.grade_curricular.models.entitys.Materia;
 import org.junit.Test;
